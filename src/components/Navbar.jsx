@@ -40,14 +40,16 @@ const Navbar = () => {
   ];
 
   const drawerContainerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, y: '-100%' },
     visible: { 
       opacity: 1, 
-      transition: { duration: 0.4, ease: "easeOut", staggerChildren: 0.1, delayChildren: 0.1 } 
+      y: 0,
+      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.08, delayChildren: 0.1 } 
     },
     exit: { 
       opacity: 0, 
-      transition: { duration: 0.3, ease: "easeIn", staggerChildren: 0.05, staggerDirection: -1 } 
+      y: '-100%',
+      transition: { duration: 0.4, ease: [0.7, 0, 0.84, 0], staggerChildren: 0.05, staggerDirection: -1 } 
     }
   };
 
@@ -93,8 +95,8 @@ const Navbar = () => {
                 offset={-70}
                 duration={500}
                 activeClass="active-nav-link"
+                className="cursor-none-desktop"
                 style={{
-                  cursor: 'none',
                   fontSize: '15px',
                   fontWeight: '500',
                   color: 'var(--text-primary)',
@@ -116,10 +118,9 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div 
-            className="mobile-btn" 
+            className="mobile-btn cursor-none-desktop" 
             onClick={() => setMobileMenuOpen(true)}
             style={{ 
-              cursor: 'none', 
               color: 'var(--gold)', 
               fontSize: '28px',
               padding: '5px',
@@ -181,6 +182,7 @@ const Navbar = () => {
             {/* Close Button */}
             <button
               onClick={() => setMobileMenuOpen(false)}
+              className="cursor-none-desktop"
               style={{
                 position: 'absolute',
                 top: '25px',
@@ -189,7 +191,6 @@ const Navbar = () => {
                 border: 'none',
                 color: '#c9a84c',
                 fontSize: '36px',
-                cursor: 'none',
                 zIndex: 10,
                 padding: '10px'
               }}
@@ -215,7 +216,7 @@ const Navbar = () => {
                     offset={-70}
                     duration={500}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="drawer-nav-item"
+                    className="drawer-nav-item cursor-none-desktop"
                     style={{
                       display: 'inline-block',
                       color: 'var(--text-primary)',
@@ -224,7 +225,6 @@ const Navbar = () => {
                       letterSpacing: '3px',
                       textDecoration: 'none',
                       padding: '10px 40px',
-                      cursor: 'none',
                       transition: 'color 0.3s ease'
                     }}
                     activeClass="active-nav-link"

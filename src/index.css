@@ -79,6 +79,12 @@ body {
   transition: transform 0.1s ease-out, width 0.2s, height 0.2s;
 }
 
+@media (min-width: 1025px) {
+  .cursor-none-desktop {
+    cursor: none !important;
+  }
+}
+
 .cursor-trail {
   width: 8px;
   height: 8px;

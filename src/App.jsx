@@ -78,7 +78,9 @@ const CinematicLoader = ({ onComplete }) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        padding: '20px',
+        boxSizing: 'border-box'
       }}
     >
       <style>{`
@@ -126,31 +128,132 @@ const CinematicLoader = ({ onComplete }) => {
           animation-delay: 2s;
           pointer-events: none;
         }
+
+        .loader-bismillah {
+          font-size: 38px;
+          font-weight: normal;
+          margin: 0;
+          background: linear-gradient(to right, #c9a84c 20%, #fff 40%, #c9a84c 60%, #e8c96d 80%, #c9a84c 100%);
+          background-size: 200% auto;
+          color: transparent;
+          WebkitBackgroundClip: text;
+          background-clip: text;
+          animation: textShimmer 4s linear infinite;
+          text-shadow: 0 0 30px rgba(201,168,76,0.8);
+          text-align: center;
+        }
+
+        .loader-name {
+          font-family: "Cormorant Garamond", serif; 
+          color: #f0ede4; 
+          font-size: 52px;
+          font-weight: 300;
+          letter-spacing: 3px;
+          text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 15px;
+        }
+
+        .loader-tagline {
+          color: #c9a84c;
+          font-size: 13px;
+          letter-spacing: 8px;
+          margin-bottom: 50px;
+          text-transform: uppercase;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .loader-bar-outer {
+          width: 500px;
+          height: 28px;
+          border: 1px solid rgba(201, 168, 76, 0.5);
+          border-radius: 4px;
+          background: rgba(0,0,0,0.4);
+          position: relative;
+          padding: 2px;
+        }
+
+        .loader-bottom-tagline {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .loader-bottom-tagline-text {
+          color: rgba(201,168,76,0.6);
+          font-size: 11px;
+          letter-spacing: 5px;
+          margin-bottom: 10px;
+          text-align: center;
+        }
+
+        @media (max-width: 768px) {
+          .loader-bismillah {
+            font-size: 22px !important;
+            text-shadow: 0 0 15px rgba(201,168,76,0.8);
+            padding: 0 10px;
+          }
+          .loader-name {
+            font-size: 26px !important;
+            letter-spacing: 2px !important;
+            padding: 0 15px;
+            margin-bottom: 10px;
+          }
+          .loader-tagline {
+            font-size: 9px !important;
+            letter-spacing: 4px !important;
+            margin-bottom: 30px !important;
+            gap: 8px !important;
+          }
+          .loader-tagline span:first-child,
+          .loader-tagline span:last-child {
+            display: none !important; /* Hide side lines */
+          }
+          .loader-bar-outer {
+            width: 80vw !important;
+            max-width: 320px !important;
+            height: 22px !important;
+          }
+          .loader-bottom-tagline-text {
+            font-size: 9px !important;
+            letter-spacing: 3px !important;
+            padding: 0 10px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .loader-bismillah {
+            font-size: 18px !important;
+          }
+          .loader-name {
+            font-size: 20px !important;
+            letter-spacing: 1.5px !important;
+          }
+          .loader-bar-outer {
+            width: 75vw !important;
+            max-width: 260px !important;
+            height: 18px !important;
+          }
+        }
       `}</style>
 
       {/* Main Content Container */}
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px', padding: '0 20px', boxSizing: 'border-box' }}>
         
         {/* Arabic Text (Bismillah) with glim container */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          style={{ marginBottom: '15px' }}
+          style={{ marginBottom: '15px', width: '100%', display: 'flex', justifyContent: 'center' }}
         >
-          <div className="glim-container">
-            <h1 className="font-amiri loader-bismillah" style={{ 
-              fontSize: '38px', 
-              fontWeight: 'normal',
-              margin: 0,
-              background: 'linear-gradient(to right, #c9a84c 20%, #fff 40%, #c9a84c 60%, #e8c96d 80%, #c9a84c 100%)',
-              backgroundSize: '200% auto',
-              color: 'transparent',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              animation: 'textShimmer 4s linear infinite',
-              textShadow: '0 0 30px rgba(201,168,76,0.8)'
-            }}>
+          <div className="glim-container" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <h1 className="font-amiri loader-bismillah">
               بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
             </h1>
           </div>
@@ -162,16 +265,6 @@ const CinematicLoader = ({ onComplete }) => {
           initial="hidden"
           animate="visible"
           className="glim-container loader-name"
-          style={{ 
-            fontFamily: '"Cormorant Garamond", serif', 
-            color: '#f0ede4', 
-            fontSize: '52px',
-            fontWeight: '300',
-            letterSpacing: '3px',
-            textShadow: '0 2px 20px rgba(0,0,0,0.8)',
-            display: 'flex',
-            marginBottom: '15px'
-          }}
         >
           {renderName()}
         </motion.div>
@@ -182,16 +275,6 @@ const CinematicLoader = ({ onComplete }) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="loader-tagline"
-          style={{
-            color: '#c9a84c',
-            fontSize: '13px',
-            letterSpacing: '8px',
-            marginBottom: '50px',
-            textTransform: 'uppercase',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '15px'
-          }}
         >
           <span>——</span>
           <span>ILM • IMAAN • IKHLAAS</span>
@@ -199,7 +282,7 @@ const CinematicLoader = ({ onComplete }) => {
         </motion.div>
 
         {/* Loading Bar Section */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           
           <motion.div
             initial={{ opacity: 0 }}
@@ -220,21 +303,13 @@ const CinematicLoader = ({ onComplete }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', width: '100%', justifyContent: 'center' }}
           >
             {/* Left Diamond */}
-            <span style={{ color: 'var(--gold)', fontSize: '10px' }}>◆</span>
+            <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
 
             {/* Outer Bar */}
-            <div className="loader-bar-outer" style={{
-              width: '500px',
-              height: '28px',
-              border: '1px solid rgba(201, 168, 76, 0.5)',
-              borderRadius: '4px',
-              background: 'rgba(0,0,0,0.4)',
-              position: 'relative',
-              padding: '2px',
-            }}>
+            <div className="loader-bar-outer">
               {/* Corner Decorations */}
               <div style={{ position: 'absolute', top: '-2px', left: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
               <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderRight: '2px solid #c9a84c' }}></div>
@@ -266,7 +341,7 @@ const CinematicLoader = ({ onComplete }) => {
             </div>
 
             {/* Right Diamond */}
-            <span style={{ color: 'var(--gold)', fontSize: '10px' }}>◆</span>
+            <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
           </motion.div>
 
           {/* Percentage */}
@@ -290,14 +365,9 @@ const CinematicLoader = ({ onComplete }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            className="loader-bottom-tagline"
           >
-            <span style={{
-              color: 'rgba(201,168,76,0.6)',
-              fontSize: '11px',
-              letterSpacing: '5px',
-              marginBottom: '10px'
-            }}>
+            <span className="loader-bottom-tagline-text">
               ✦ SEEKING KNOWLEDGE • SERVING UMMAH ✦
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

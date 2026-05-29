@@ -647,27 +647,31 @@ const Hero = () => {
           @media (max-width: 768px) {
             .hero-editorial {
               min-height: 100svh;
-              align-items: flex-end;
+              align-items: center !important;
             }
             .hero-fg {
               padding: 0 24px !important;
-              padding-bottom: 130px !important;
+              padding-top: 80px !important;
+              padding-bottom: 0 !important;
             }
             .hero-brand-line-1 {
-              font-size: clamp(36px, 9.5vw, 64px) !important;
+              font-size: clamp(28px, 6.5vw, 68px) !important;
+              letter-spacing: clamp(2px, 0.8vw, 8px) !important;
             }
             .hero-brand-line-2 {
-              font-size: clamp(32px, 8.5vw, 56px) !important;
+              font-size: clamp(26px, 6vw, 60px) !important;
+              letter-spacing: clamp(1.5px, 0.7vw, 6px) !important;
             }
             .hero-brand-line-3 {
-              font-size: clamp(38px, 10vw, 68px) !important;
-              letter-spacing: clamp(4px, 1.2vw, 14px) !important;
+              font-size: clamp(29px, 7vw, 70px) !important;
+              letter-spacing: clamp(3px, 0.9vw, 10px) !important;
             }
             .hero-secondary {
-              font-size: clamp(18px, 4vw, 26px) !important;
+              font-size: clamp(18px, 4vw, 24px) !important;
             }
             .hero-support {
               font-size: 13px !important;
+              margin-bottom: 24px !important;
             }
             .hero-divider {
               margin: 20px 0 20px !important;
@@ -677,6 +681,10 @@ const Hero = () => {
               align-items: stretch;
               gap: 10px;
               width: 100%;
+            }
+            .hero-cta-row a {
+              width: 100%;
+              display: block;
             }
             .hero-btn-gold, .hero-btn-ghost {
               width: 100%;
@@ -700,19 +708,21 @@ const Hero = () => {
           }
 
           @media (max-width: 480px) {
+            .hero-fg {
+              padding-top: 100px !important;
+              padding-bottom: 0 !important;
+            }
             .hero-brand-line-1 {
-              font-size: clamp(32px, 10vw, 48px) !important;
+              font-size: clamp(24px, 7.5vw, 42px) !important;
               letter-spacing: 2px !important;
             }
             .hero-brand-line-2 {
-              font-size: clamp(28px, 9vw, 42px) !important;
+              font-size: clamp(22px, 7vw, 38px) !important;
+              letter-spacing: 1.5px !important;
             }
             .hero-brand-line-3 {
-              font-size: clamp(34px, 11vw, 52px) !important;
-              letter-spacing: 4px !important;
-            }
-            .hero-fg {
-              padding-bottom: 110px !important;
+              font-size: clamp(25px, 8vw, 44px) !important;
+              letter-spacing: 3px !important;
             }
             .hero-trust-inner {
               grid-template-columns: 1fr 1fr !important;
