@@ -314,7 +314,7 @@ const Hero = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div style={{
+      <div className="scroll-indicator-wrapper" style={{
         position: 'absolute',
         bottom: '20px',
         left: '50%',

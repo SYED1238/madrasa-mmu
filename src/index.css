@@ -107,3 +107,73 @@ body {
 .bg-gold {
   background-color: var(--gold);
 }
+
+/* =========================================
+   MOBILE RESPONSIVENESS FIXES
+========================================= */
+
+body, html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+section, footer {
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* General Sections Padding & Heading */
+  section, footer {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  
+  h2, h3, .section-heading {
+    font-size: clamp(24px, 8vw, 32px) !important;
+  }
+
+  /* Navbar */
+  nav .font-amiri {
+    display: none !important;
+  }
+  nav > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Hero Specific overrides */
+  #hero .hero-heading:nth-child(1) { font-size: 18vw !important; }
+  #hero .hero-heading:nth-child(2) { font-size: 13vw !important; }
+  #hero .hero-heading:nth-child(3) { font-size: 18vw !important; }
+  
+  #hero .floating-card, 
+  #hero .scroll-indicator-wrapper {
+    display: none !important;
+  }
+
+  /* Loader */
+  .loader-bismillah { font-size: 24px !important; }
+  .loader-name { font-size: 28px !important; }
+  .loader-tagline { font-size: 11px !important; }
+  .loader-bar-outer { width: 90vw !important; max-width: 500px !important; }
+
+  /* WhyUs Cards */
+  #whyus .grid-container {
+    grid-template-columns: 1fr !important;
+  }
+  .stat-grid-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .stat-box {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+}

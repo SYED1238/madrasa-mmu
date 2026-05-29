@@ -193,7 +193,7 @@ const CinematicLoader = () => {
           style={{ marginBottom: '15px' }}
         >
           <div className="glim-container">
-            <h1 className="font-amiri" style={{ 
+            <h1 className="font-amiri loader-bismillah" style={{ 
               fontSize: '38px', 
               fontWeight: 'normal',
               margin: 0,
@@ -275,7 +275,7 @@ const CinematicLoader = () => {
           variants={letterContainer}
           initial="hidden"
           animate="visible"
-          className="glim-container"
+          className="glim-container loader-name"
           style={{ 
             fontFamily: '"Cormorant Garamond", serif', 
             color: '#f0ede4', 
@@ -295,6 +295,7 @@ const CinematicLoader = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.8 }}
+          className="loader-tagline"
           style={{
             color: '#c9a84c',
             fontSize: '13px',
@@ -339,7 +340,7 @@ const CinematicLoader = () => {
             <span style={{ color: 'var(--gold)', fontSize: '10px' }}>◆</span>
 
             {/* Outer Bar */}
-            <div style={{
+            <div className="loader-bar-outer" style={{
               width: '500px',
               height: '28px',
               border: '1px solid rgba(201,168,76,0.5)',

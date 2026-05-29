@@ -86,9 +86,9 @@ const GlassCard = ({ index, num, label, labelColor, heading, subtitle, stats }) 
       <AnimatedWaveBar />
 
       {/* Bottom Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+      <div className="stat-grid-container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
         {stats.map((stat, i) => (
-          <div key={i} style={{
+          <div key={i} className="stat-box" style={{
             background: 'var(--bg-primary)',
             padding: '15px',
             borderRadius: '12px',
@@ -173,7 +173,7 @@ const WhyUs = () => {
           <p style={{ color: 'var(--text-muted)' }}>The foundations of our institution</p>
         </div>
 
-        <div style={{
+        <div className="grid-container" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
           gap: '40px'
