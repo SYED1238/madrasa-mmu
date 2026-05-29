@@ -1,351 +1,912 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-scroll';
 
-const Hero = () => {
+/* ─────────────────────────────────────────────
+   ANIMATED COUNTER — for the Trust Bar
+───────────────────────────────────────────── */
+const AnimatedCounter = ({ end, suffix = '+', label, delay = 0 }) => {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const duration = 2200;
+          let startTime = null;
+          const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * end));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          setTimeout(() => requestAnimationFrame(step), delay);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
+  }, [end, delay, hasAnimated]);
+
   return (
-    <section id="hero" style={{
-      position: 'relative',
-      minHeight: '100vh',
-      backgroundColor: '#050508',
-      overflow: 'hidden',
-      display: 'flex',
-      alignItems: 'center'
-    }}>
-      <style>{`
-        @keyframes noiseMove {
-          0%, 100% { transform: translate(0, 0); }
-          10% { transform: translate(-5%, -5%); }
-          20% { transform: translate(-10%, 5%); }
-          30% { transform: translate(5%, -10%); }
-          40% { transform: translate(-5%, 15%); }
-          50% { transform: translate(-10%, 5%); }
-          60% { transform: translate(15%, 0); }
-          70% { transform: translate(0, 10%); }
-          80% { transform: translate(-15%, 0); }
-          90% { transform: translate(10%, 5%); }
-        }
-        @keyframes floatUpDownCard {
-          0%, 100% { transform: translateY(-8px); }
-          50% { transform: translateY(8px); }
-        }
-        @keyframes scrollLine {
-          0% { transform: translateY(-100%); opacity: 0; }
-          50% { opacity: 1; }
-          100% { transform: translateY(100%); opacity: 0; }
-        }
+    <div ref={ref} className="trust-stat">
+      <span className="trust-stat-number font-playfair">
+        {count.toLocaleString()}{suffix}
+      </span>
+      <span className="trust-stat-label">{label}</span>
+    </div>
+  );
+};
 
-        .hero-heading {
-          font-family: 'Playfair Display', serif;
-          font-size: clamp(60px, 8vw, 120px);
-          font-weight: 800;
-          line-height: 0.9;
-          letter-spacing: -2px;
-          margin: 0;
-          text-transform: uppercase;
-        }
+/* ─────────────────────────────────────────────
+   FLOATING PARTICLES
+───────────────────────────────────────────── */
+const FloatingParticles = () => {
+  const particles = useRef(
+    Array.from({ length: 24 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2 + 0.8,
+      dur: Math.random() * 18 + 12,
+      del: Math.random() * 10,
+      op: Math.random() * 0.3 + 0.05
+    }))
+  ).current;
 
-        @media (max-width: 768px) {
-          .floating-card {
-            display: none;
+  return (
+    <div className="hero-particles">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="hero-particle"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            animationDuration: `${p.dur}s`,
+            animationDelay: `${p.del}s`,
+            opacity: p.op
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+/* ═════════════════════════════════════════════
+   HERO — Iceland-style editorial composition
+═════════════════════════════════════════════ */
+const Hero = () => {
+  const heroRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+
+  /* ── Parallax scroll ── */
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start']
+  });
+  const foregroundY = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  const bgOpacity   = useTransform(scrollYProgress, [0, 0.6], [1, 0.4]);
+
+  /* ── Mouse tracking ── */
+  const handleMouseMove = useCallback((e) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    setMousePos({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height
+    });
+  }, []);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (el) el.addEventListener('mousemove', handleMouseMove);
+    return () => { if (el) el.removeEventListener('mousemove', handleMouseMove); };
+  }, [handleMouseMove]);
+
+  /* ── Centerpiece phrase cycling ── */
+  const phrases = ['Seeking Knowledge', 'Strengthening Faith', 'Serving Humanity'];
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setPhraseIdx((p) => (p + 1) % phrases.length), 3200);
+    return () => clearInterval(t);
+  }, [phrases.length]);
+
+  return (
+    <>
+      <section id="hero" ref={heroRef} className="hero-editorial">
+        {/* ═══════════ SCOPED STYLES ═══════════ */}
+        <style>{`
+          /* ──────────────────────────────────────
+             HERO: EDITORIAL / ICELAND COMPOSITION
+          ────────────────────────────────────── */
+          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+
+          .hero-editorial {
+            position: relative;
+            min-height: 100vh;
+            height: 100vh;
+            background-color: #050508;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
-        }
-      `}</style>
 
-      {/* Static Background Image Div */}
-      <div id="hero-bg" style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundImage: "url('/bismillah-bg.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        zIndex: 0
-      }}></div>
+          /* ── LAYER 0: VIDEO BACKGROUND ── */
+          .hero-video-wrap {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+          }
+          .hero-video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+          }
+          .hero-video-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 5, 8, 0.70);
+            z-index: 1;
+          }
 
-      {/* Dark Cinematic Overlay Gradient */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(105deg, rgba(5,5,8,0.95) 0%, rgba(5,5,8,0.85) 40%, rgba(5,5,8,0.5) 70%, rgba(5,5,8,0.2) 100%)',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }}></div>
+          /* ── LAYER 1: ATMOSPHERIC BACKGROUND ── */
+          .hero-atmo {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+          }
+          .hero-atmo-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+              ellipse 120% 100% at 50% 80%,
+              rgba(201,168,76,0.06) 0%,
+              transparent 60%
+            );
+          }
+          .hero-atmo-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+              ellipse 80% 70% at 50% 50%,
+              transparent 40%,
+              rgba(5,5,8,0.7) 100%
+            );
+          }
 
-      {/* Film Grain Overlay */}
-      <div style={{
-        position: 'absolute',
-        top: '-50%', left: '-50%',
-        width: '200%', height: '200%',
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.4\'/%3E%3C/svg%3E")',
-        opacity: 0.05,
-        pointerEvents: 'none',
-        zIndex: 10,
-        animation: 'noiseMove 8s steps(10) infinite'
-      }}></div>
+          /* ── FOREGROUND CONTENT ── */
+          .hero-fg {
+            position: relative;
+            z-index: 6;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            pointer-events: none;
+          }
+          .hero-fg > * { pointer-events: auto; }
 
-      {/* Bismillah Watermark */}
-      <div style={{
-        position: 'absolute',
-        top: '40px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        opacity: 0.4,
-        zIndex: 4,
-        pointerEvents: 'none'
-      }}>
-        <span className="font-amiri" style={{ color: 'var(--gold)', fontSize: '18px' }}>
-          بسم الله الرحمن الرحيم
-        </span>
-      </div>
+          /* Eyebrow label */
+          .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+          }
+          .hero-eyebrow-line {
+            width: 36px;
+            height: 1px;
+            background: linear-gradient(90deg, #c9a84c, transparent);
+          }
+          .hero-eyebrow span {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.60);
+          }
 
-      {/* Main Content Container */}
-      <div style={{
-        maxWidth: '1400px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '0 5%',
-        position: 'relative',
-        zIndex: 5,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        
-        {/* Left Content Area */}
-        <div style={{ maxWidth: '800px' }}>
+          /* Brand name — dominant */
+          .hero-brand {
+            margin: 0 0 16px;
+            line-height: 0.9;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            filter: drop-shadow(0 4px 20px rgba(201, 168, 76, 0.12));
+            transition: filter 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          }
+          .hero-brand-line {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            text-transform: uppercase;
+            line-height: 0.95;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          }
           
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}
+          /* Line 1: MADRASA e */
+          .hero-brand-line-1 {
+            font-size: clamp(52px, 8.5vw, 130px);
+            color: #f7f5f0;
+            font-weight: 400;
+            letter-spacing: clamp(4px, 1.2vw, 16px);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+          }
+          .hero-brand-e {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            text-transform: lowercase;
+            color: #dfba6b;
+            background: linear-gradient(135deg, #ffe082 0%, #c9a84c 50%, #8d6e15 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: clamp(10px, 1.5vw, 24px);
+            position: relative;
+            letter-spacing: 0;
+            text-shadow: none;
+          }
+          
+          /* Line 2: MADEENATUL & Line 3: ULOOM */
+          .hero-brand-line-2, .hero-brand-line-3 {
+            background: linear-gradient(
+              135deg,
+              #ffffff 0%,
+              #f5e0b3 25%,
+              #c9a84c 50%,
+              #e8c96d 75%,
+              #ffffff 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShine 8s ease-in-out infinite;
+          }
+          
+          .hero-brand-line-2 {
+            font-size: clamp(48px, 7.8vw, 115px);
+            font-weight: 700;
+            letter-spacing: clamp(3px, 1vw, 12px);
+          }
+          
+          .hero-brand-line-3 {
+            font-size: clamp(54px, 9vw, 135px);
+            font-weight: 800;
+            letter-spacing: clamp(6px, 1.5vw, 22px);
+          }
+
+          @keyframes goldShine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+
+          /* Hover dynamic spacing & glow */
+          .hero-brand:hover {
+            filter: drop-shadow(0 0 35px rgba(201, 168, 76, 0.35));
+          }
+          .hero-brand:hover .hero-brand-line-1 {
+            letter-spacing: clamp(6px, 1.4vw, 20px);
+            text-shadow: 0 0 50px rgba(255, 255, 255, 0.15);
+          }
+          .hero-brand:hover .hero-brand-line-2 {
+            letter-spacing: clamp(5px, 1.2vw, 16px);
+          }
+          .hero-brand:hover .hero-brand-line-3 {
+            letter-spacing: clamp(8px, 1.8vw, 26px);
+          }
+
+          /* Gold accent divider */
+          .hero-divider {
+            width: 80px;
+            height: 1.5px;
+            background: linear-gradient(90deg, #c9a84c, rgba(201,168,76,0.15));
+            margin: 28px 0 28px;
+            position: relative;
+            overflow: hidden;
+          }
+          .hero-divider::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimDivider 3.5s ease-in-out infinite;
+          }
+          @keyframes shimDivider {
+            0%   { left: -100%; }
+            100% { left: 200%; }
+          }
+
+          /* Secondary headline */
+          .hero-secondary {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(20px, 2.4vw, 36px);
+            font-weight: 300;
+            line-height: 1.3;
+            color: rgba(240, 237, 228, 0.72);
+            margin: 0 0 20px;
+            letter-spacing: 0.5px;
+          }
+          .hero-secondary em {
+            font-style: italic;
+            color: #c9a84c;
+            font-weight: 400;
+          }
+
+          /* Supporting text */
+          .hero-support {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(255,255,255,0.42);
+            max-width: 480px;
+            line-height: 1.8;
+            margin-bottom: 44px;
+            font-weight: 300;
+          }
+
+          /* CTA */
+          .hero-cta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+          }
+
+          .hero-btn-gold {
+            position: relative;
+            padding: 16px 38px;
+            background: linear-gradient(135deg, #c9a84c 0%, #e8c96d 50%, #c9a84c 100%);
+            background-size: 200% 200%;
+            color: #050508;
+            border: none;
+            border-radius: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            cursor: none;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+          }
+          .hero-btn-gold::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+          }
+          .hero-btn-gold:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 14px 45px rgba(201,168,76,0.4), 0 0 80px rgba(201,168,76,0.12);
+            background-position: 100% 100%;
+          }
+          .hero-btn-gold:hover::before { transform: translateX(100%); }
+
+          .hero-btn-ghost {
+            padding: 16px 32px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid rgba(201,168,76,0.22);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            cursor: none;
+            transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+            position: relative;
+            overflow: hidden;
+          }
+          .hero-btn-ghost::before {
+            content: '';
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 0;
+            background: rgba(201,168,76,0.07);
+            transition: height 0.4s ease;
+          }
+          .hero-btn-ghost:hover {
+            border-color: rgba(201,168,76,0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(201,168,76,0.12);
+          }
+          .hero-btn-ghost:hover::before { height: 100%; }
+
+          /* ── PARTICLES & EFFECTS ── */
+          .hero-particles {
+            position: absolute; inset: 0;
+            z-index: 7;
+            pointer-events: none;
+          }
+          .hero-particle {
+            position: absolute;
+            background: #c9a84c;
+            border-radius: 50%;
+            animation: particleDrift linear infinite;
+          }
+          @keyframes particleDrift {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            15%  { opacity: 1; }
+            85%  { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(40px) scale(0.3); opacity: 0; }
+          }
+
+          /* Light rays */
+          .hero-rays {
+            position: absolute; inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            overflow: hidden;
+          }
+          .hero-ray {
+            position: absolute;
+            top: -30%;
+            width: 2px;
+            height: 160%;
+            background: linear-gradient(180deg,
+              transparent 0%,
+              rgba(201,168,76,0.04) 25%,
+              rgba(201,168,76,0.09) 50%,
+              rgba(201,168,76,0.04) 75%,
+              transparent 100%
+            );
+            transform-origin: top center;
+          }
+          .hero-ray:nth-child(1){ left:18%; transform:rotate(-6deg); animation:rayDrift 14s ease-in-out infinite; }
+          .hero-ray:nth-child(2){ left:38%; width:3px; transform:rotate(-2deg); animation:rayDrift 18s ease-in-out infinite 3s; }
+          .hero-ray:nth-child(3){ right:28%; transform:rotate(4deg); animation:rayDrift 16s ease-in-out infinite 1s; }
+          .hero-ray:nth-child(4){ right:10%; width:1.5px; transform:rotate(9deg); animation:rayDrift 20s ease-in-out infinite 5s; }
+          @keyframes rayDrift {
+            0%,100% { opacity:0.25; }
+            50%     { opacity:0.7; transform:rotate(var(--r,0deg)) translateX(15px); }
+          }
+
+          /* Mouse glow */
+          .hero-mouse-glow {
+            position: absolute;
+            width: 450px; height: 450px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+            transition: transform 0.15s ease-out;
+          }
+
+          /* Film grain */
+          .hero-grain {
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            opacity: 0.035;
+            pointer-events: none;
+            z-index: 8;
+            animation: grain 8s steps(10) infinite;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+          }
+          @keyframes grain {
+            0%,100%{ transform:translate(0,0); }
+            20%{ transform:translate(-5%,-5%); }
+            40%{ transform:translate(5%,5%); }
+            60%{ transform:translate(-3%,8%); }
+            80%{ transform:translate(8%,-3%); }
+          }
+
+          /* Centerpiece motto */
+          .hero-motto {
+            position: absolute;
+            bottom: clamp(140px, 18vh, 220px);
+            right: clamp(40px, 8vw, 120px);
+            z-index: 7;
+            text-align: right;
+            pointer-events: none;
+          }
+          .hero-motto-word {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(12px, 1.5vw, 18px);
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(201, 168, 76, 0.45); /* Elegant low opacity gold */
+            text-shadow: 0 0 20px rgba(201, 168, 76, 0.08);
+          }
+          .hero-motto-accent {
+            display: inline-block;
+            width: 24px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(201, 168, 76, 0.4), transparent);
+            margin-left: 14px;
+            vertical-align: middle;
+          }
+
+          /* Scroll indicator */
+          .hero-scroll {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 7;
+          }
+          .hero-scroll-txt {
+            font-size: 8px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(201,168,76,0.35);
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+          }
+          .hero-scroll-bar {
+            width: 1px; height: 32px;
+            background: rgba(201,168,76,0.12);
+            position: relative;
+            overflow: hidden;
+          }
+          .hero-scroll-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            background: #c9a84c;
+            animation: scrollPulse 2.2s ease-in-out infinite;
+          }
+          @keyframes scrollPulse {
+            0%   { transform: translateY(-100%); opacity:0; }
+            50%  { opacity:1; }
+            100% { transform: translateY(250%); opacity:0; }
+          }
+
+          /* ── TRUST BAR ── */
+          .hero-trust-bar {
+            background: linear-gradient(180deg, rgba(10,10,18,0.97) 0%, rgba(8,8,14,1) 100%);
+            border-top: 1px solid rgba(201,168,76,0.10);
+            border-bottom: 1px solid rgba(201,168,76,0.06);
+            position: relative;
+            z-index: 20;
+          }
+          .hero-trust-bar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.25), transparent);
+          }
+          .hero-trust-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 38px 40px;
+          }
+          .trust-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 10px;
+            position: relative;
+          }
+          .trust-stat:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0; top: 18%; height: 64%; width: 1px;
+            background: rgba(201,168,76,0.08);
+          }
+          .trust-stat-number {
+            font-size: clamp(26px, 3vw, 40px);
+            font-weight: 400;
+            color: #c9a84c;
+            letter-spacing: -1px;
+          }
+          .trust-stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.30);
+          }
+
+          /* ═══════ RESPONSIVE ═══════ */
+          @media (max-width: 1024px) {
+            .hero-fg {
+              padding: 0 40px;
+            }
+            .hero-brand-line-1 {
+              font-size: clamp(44px, 7vw, 95px) !important;
+            }
+            .hero-brand-line-2 {
+              font-size: clamp(40px, 6.5vw, 85px) !important;
+            }
+            .hero-brand-line-3 {
+              font-size: clamp(46px, 7.5vw, 100px) !important;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .hero-editorial {
+              min-height: 100svh;
+              align-items: flex-end;
+            }
+            .hero-fg {
+              padding: 0 24px !important;
+              padding-bottom: 130px !important;
+            }
+            .hero-brand-line-1 {
+              font-size: clamp(36px, 9.5vw, 64px) !important;
+            }
+            .hero-brand-line-2 {
+              font-size: clamp(32px, 8.5vw, 56px) !important;
+            }
+            .hero-brand-line-3 {
+              font-size: clamp(38px, 10vw, 68px) !important;
+              letter-spacing: clamp(4px, 1.2vw, 14px) !important;
+            }
+            .hero-secondary {
+              font-size: clamp(18px, 4vw, 26px) !important;
+            }
+            .hero-support {
+              font-size: 13px !important;
+            }
+            .hero-divider {
+              margin: 20px 0 20px !important;
+            }
+            .hero-cta-row {
+              flex-direction: column;
+              align-items: stretch;
+              gap: 10px;
+              width: 100%;
+            }
+            .hero-btn-gold, .hero-btn-ghost {
+              width: 100%;
+              text-align: center;
+              justify-content: center;
+            }
+            .hero-trust-inner {
+              grid-template-columns: repeat(2, 1fr) !important;
+              padding: 28px 20px !important;
+              gap: 12px;
+            }
+            .trust-stat:nth-child(2)::after { display: none; }
+            .hero-motto {
+              bottom: 45px;
+              right: 24px;
+              left: auto;
+              transform: none;
+              text-align: right;
+            }
+            .hero-scroll { display: none; }
+          }
+
+          @media (max-width: 480px) {
+            .hero-brand-line-1 {
+              font-size: clamp(32px, 10vw, 48px) !important;
+              letter-spacing: 2px !important;
+            }
+            .hero-brand-line-2 {
+              font-size: clamp(28px, 9vw, 42px) !important;
+            }
+            .hero-brand-line-3 {
+              font-size: clamp(34px, 11vw, 52px) !important;
+              letter-spacing: 4px !important;
+            }
+            .hero-fg {
+              padding-bottom: 110px !important;
+            }
+            .hero-trust-inner {
+              grid-template-columns: 1fr 1fr !important;
+            }
+            .trust-stat:not(:last-child)::after { display: none; }
+          }
+        `}</style>
+
+        {/* ═══ LAYER 0: VIDEO BACKGROUND ═══ */}
+        <div className="hero-video-wrap">
+          <video
+            className="hero-video-bg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
           >
-            <span style={{ color: 'var(--gold)', fontSize: '12px' }}>✦</span>
-            <span style={{ 
-              color: 'var(--gold-dim)', 
-              fontSize: '12px', 
-              textTransform: 'uppercase', 
-              letterSpacing: '3px',
-              fontWeight: '600'
-            }}>
-              Islamic Educational Institution
-            </span>
+            <source src="/videos/hero-background.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-video-overlay" />
+        </div>
+
+        {/* ░░ GRAIN ░░ */}
+        <div className="hero-grain" />
+
+        {/* ═══ LAYER 1: ATMOSPHERE ═══ */}
+        <motion.div className="hero-atmo" style={{ opacity: bgOpacity }}>
+          <div className="hero-atmo-gradient" />
+          <div className="hero-atmo-vignette" />
+        </motion.div>
+
+        {/* ═══ FOREGROUND CONTENT ═══ */}
+        <motion.div className="hero-fg" style={{ y: foregroundY }}>
+
+          {/* Eyebrow */}
+          <motion.div
+            className="hero-eyebrow"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <div className="hero-eyebrow-line" />
+            <span>Est. Ramanagara, Karnataka</span>
           </motion.div>
 
-          <div style={{ marginBottom: '30px' }}>
-            <motion.h1
-              initial={{ opacity: 0, x: -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              className="hero-heading"
-              style={{ color: '#ffffff' }}
-            >
-              MADRASA
-            </motion.h1>
-            <motion.h1
-              initial={{ opacity: 0, x: -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="hero-heading"
-              style={{ color: 'var(--gold)' }}
-            >
-              MADEENATUL
-            </motion.h1>
-            <motion.h1
-              initial={{ opacity: 0, x: -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-              className="hero-heading"
-              style={{ color: '#ffffff' }}
-            >
-              ULOOM
-            </motion.h1>
-          </div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            style={{
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '18px',
-              lineHeight: '1.6',
-              maxWidth: '450px',
-              marginBottom: '40px'
+          {/* Brand name — dominant */}
+          <motion.h1
+            className="hero-brand"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.12,
+                  delayChildren: 0.6
+                }
+              }
             }}
           >
-            Rooted in faith. Built on knowledge. Serving the Muslim community of Ramanagara since our founding.
-          </motion.p>
+            <motion.span
+              className="hero-brand-line hero-brand-line-1"
+              variants={{
+                hidden: { opacity: 0, y: 30, clipPath: 'inset(0 0 100% 0)' },
+                visible: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }
+              }}
+              transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Madrasa <span className="hero-brand-e">e</span>
+            </motion.span>
+            <motion.span
+              className="hero-brand-line hero-brand-line-2"
+              variants={{
+                hidden: { opacity: 0, y: 35, clipPath: 'inset(0 0 100% 0)' },
+                visible: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }
+              }}
+              transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Madeenatul
+            </motion.span>
+            <motion.span
+              className="hero-brand-line hero-brand-line-3"
+              variants={{
+                hidden: { opacity: 0, y: 40, clipPath: 'inset(0 0 100% 0)' },
+                visible: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }
+              }}
+              transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Uloom
+            </motion.span>
+          </motion.h1>
 
+          {/* Divider */}
           <motion.div
+            className="hero-divider"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 80, opacity: 1 }}
+            transition={{ duration: 1, delay: 1.5 }}
+          />
+
+          {/* Secondary headline */}
+          <motion.h2
+            className="hero-secondary"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '20px' }}
+            transition={{ duration: 0.8, delay: 1.7 }}
+          >
+            Where Faith <em>Meets</em> Knowledge
+          </motion.h2>
+
+          {/* Supporting text */}
+          <motion.p
+            className="hero-support"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.9 }}
+          >
+            A prestigious Islamic institution nurturing scholars, character, and faith in the heart of Ramanagara.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            className="hero-cta-row"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2.1 }}
           >
             <Link to="admissions" smooth={true} offset={-70} duration={500}>
-              <button style={{
-                backgroundColor: 'var(--gold)',
-                color: '#050508',
-                border: 'none',
-                padding: '16px 36px',
-                borderRadius: '50px',
-                fontSize: '15px',
-                fontWeight: '700',
-                cursor: 'none',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 20px rgba(201,168,76,0.2)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = 'var(--gold-light)';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 25px rgba(201,168,76,0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'var(--gold)';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 20px rgba(201,168,76,0.2)';
-              }}
-              >
+              <button className="hero-btn-gold" id="hero-enroll-btn">
                 Enroll Your Child
               </button>
             </Link>
-
-            <Link to="about" smooth={true} offset={-70} duration={500}>
-              <button style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '50%',
-                backgroundColor: 'transparent',
-                border: '2px solid var(--gold)',
-                color: 'var(--gold)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'none',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(201,168,76,0.1)';
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+            <Link to="programs" smooth={true} offset={-70} duration={500}>
+              <button className="hero-btn-ghost" id="hero-programs-btn">
+                Explore Programs
               </button>
             </Link>
           </motion.div>
-
-        </div>
-
-        {/* Right Floating Card */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, delay: 1.4 }}
-          className="floating-card"
-          style={{
-            position: 'absolute',
-            top: '20%',
-            right: '5%',
-            background: 'rgba(255,255,255,0.05)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(201,168,76,0.2)',
-            borderRadius: '16px',
-            padding: '24px',
-            width: '280px',
-            animation: 'floatUpDownCard 3s ease-in-out infinite'
-          }}
-        >
-          {/* Top avatars */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-            <div style={{ display: 'flex' }}>
-              {['M', 'A', 'S'].map((initial, i) => (
-                <div key={i} style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--gold)',
-                  border: '2px solid #050508',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#050508',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  marginLeft: i === 0 ? '0' : '-12px',
-                  zIndex: 3 - i
-                }}>
-                  {initial}
-                </div>
-              ))}
-            </div>
-            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px', lineHeight: '1.2' }}>
-              Trusted by the<br/>Community
-            </span>
-          </div>
-
-          {/* Middle stars */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-            <div style={{ color: 'var(--gold)', fontSize: '14px', letterSpacing: '2px' }}>
-              ★★★★★
-            </div>
-            <span style={{ color: '#fff', fontSize: '14px', fontWeight: '600' }}>
-              Rated 5.0
-            </span>
-          </div>
-
-          {/* Bottom location */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' }}>
-            <span style={{ color: 'var(--gold)', fontSize: '16px' }}>📍</span>
-            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>
-              Ramanagara, Karnataka
-            </span>
-          </div>
         </motion.div>
 
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="scroll-indicator-wrapper" style={{
-        position: 'absolute',
-        bottom: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '10px',
-        zIndex: 6
-      }}>
-        <span style={{ 
-          color: 'var(--gold)', 
-          fontSize: '10px', 
-          letterSpacing: '3px',
-          writingMode: 'vertical-rl',
-          transform: 'rotate(180deg)',
-          opacity: 0.6
-        }}>
-          SCROLL
-        </span>
-        <div style={{ width: '1px', height: '40px', backgroundColor: 'rgba(201,168,76,0.2)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, height: '50%',
-            backgroundColor: 'var(--gold)',
-            animation: 'scrollLine 2s ease-in-out infinite'
-          }}></div>
+        {/* ═══ LAYER 5: RAYS, PARTICLES, GLOW ═══ */}
+        <div className="hero-rays">
+          <div className="hero-ray" />
+          <div className="hero-ray" />
+          <div className="hero-ray" />
+          <div className="hero-ray" />
         </div>
-      </div>
+        <FloatingParticles />
 
-    </section>
+        {/* Mouse glow */}
+        <div
+          className="hero-mouse-glow"
+          style={{
+            transform: `translate(${mousePos.x * (typeof window !== 'undefined' ? window.innerWidth : 1400) - 225}px, ${mousePos.y * (typeof window !== 'undefined' ? window.innerHeight : 900) - 225}px)`
+          }}
+        />
+
+        {/* Centerpiece motto */}
+        <div className="hero-motto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={phraseIdx}
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -15 }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+            >
+              <span className="hero-motto-word">{phrases[phraseIdx]}</span>
+              <span className="hero-motto-accent" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Scroll */}
+        <div className="hero-scroll">
+          <span className="hero-scroll-txt">SCROLL</span>
+          <div className="hero-scroll-bar" />
+        </div>
+      </section>
+
+      {/* ═══ TRUST BAR ═══ */}
+      <section className="hero-trust-bar" id="trust-bar">
+        <div className="hero-trust-inner">
+          <AnimatedCounter end={500}   suffix="+" label="Students"       delay={0} />
+          <AnimatedCounter end={15}    suffix="+" label="Years"          delay={200} />
+          <AnimatedCounter end={25000} suffix="+" label="Learning Hours" delay={400} />
+          <AnimatedCounter end={100}   suffix="%" label="MMU Trust"      delay={600} />
+        </div>
+      </section>
+    </>
   );
 };
 

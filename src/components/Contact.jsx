@@ -12,19 +12,19 @@ const Contact = () => {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '50px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: 'clamp(25px, 4vw, 50px)',
           alignItems: 'center'
         }}>
           
           {/* Custom Static Map Card */}
-          <div style={{
+          <div className="contact-map-card" style={{
             border: '2px solid var(--gold)',
             borderRadius: '16px',
             overflow: 'hidden',
             position: 'relative',
             background: '#040b12',
-            height: '450px',
+            height: 'clamp(320px, 45vh, 450px)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -44,6 +44,11 @@ const Contact = () => {
                 background-image: 
                   linear-gradient(to right, rgba(0, 128, 128, 0.1) 1px, transparent 1px),
                   linear-gradient(to bottom, rgba(0, 128, 128, 0.1) 1px, transparent 1px);
+              }
+              @media (max-width: 768px) {
+                .contact-map-card {
+                  height: 350px !important;
+                }
               }
             `}</style>
 

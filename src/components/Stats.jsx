@@ -60,7 +60,7 @@ const Stats = () => {
       position: 'relative',
       zIndex: 20
     }}>
-      <div style={{
+      <div className="stats-grid-container" style={{
         maxWidth: '1200px',
         margin: '0 auto',
         display: 'grid',

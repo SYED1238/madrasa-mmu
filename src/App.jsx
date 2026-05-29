@@ -13,46 +13,31 @@ import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
-const CinematicLoader = () => {
-  const [particles, setParticles] = useState([]);
+const CinematicLoader = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
-  
-  useEffect(() => {
-    const newParticles = Array.from({ length: 25 }).map((_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      size: Math.random() * 3 + 1 + 'px', // 1-4px
-      opacity: Math.random() * 0.4 + 0.3, // 0.3-0.7
-      animationDuration: Math.random() * 4 + 3 + 's', // slow rise
-      delay: Math.random() * 2 + 's',
-    }));
-    setParticles(newParticles);
-  }, []);
 
   useEffect(() => {
-    // Start counting at 2.0s
-    const timer = setTimeout(() => {
-      let startTimestamp;
-      const duration = 2500; // 2.5 seconds to fill
-      const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const elapsed = timestamp - startTimestamp;
-        const currentProgress = Math.min((elapsed / duration) * 100, 100);
-        setProgress(Math.floor(currentProgress));
-        if (elapsed < duration) {
-          window.requestAnimationFrame(step);
-        }
-      };
-      window.requestAnimationFrame(step);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    let startTimestamp;
+    const duration = 2200; // 2.2 seconds to fill
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const currentProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(Math.floor(currentProgress));
+      if (elapsed < duration) {
+        window.requestAnimationFrame(step);
+      } else {
+        if (onComplete) onComplete();
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [onComplete]);
 
   const letterContainer = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.05, delayChildren: 1.3 }
+      transition: { staggerChildren: 0.05, delayChildren: 0.4 }
     }
   };
 
@@ -82,15 +67,12 @@ const CinematicLoader = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.05, transition: { duration: 1, ease: "easeInOut" } }}
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeOut" } }}
       style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        backgroundImage: "url('/loader-bg.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundColor: '#050508',
         zIndex: 9999,
         display: 'flex',
         flexDirection: 'column',
@@ -102,18 +84,9 @@ const CinematicLoader = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
 
-        @keyframes floatUpLoader {
-          0% { transform: translateY(100vh); opacity: 0; }
-          20% { opacity: var(--target-opacity); }
-          100% { transform: translateY(-20vh); opacity: 0; }
-        }
         @keyframes textShimmer {
           0% { background-position: -200% center; }
           100% { background-position: 200% center; }
-        }
-        @keyframes floatUpDownIcon {
-          0%, 100% { transform: translateY(-4px); }
-          50% { transform: translateY(4px); }
         }
         @keyframes pulseGlow {
           0%, 100% { opacity: 0.4; transform: scale(1); }
@@ -131,7 +104,7 @@ const CinematicLoader = () => {
         .glim-container {
           position: relative;
           overflow: hidden;
-          padding: 10px 0; /* padding to prevent text shadow clipping */
+          padding: 10px 0;
         }
         
         .glim-container::after {
@@ -155,33 +128,6 @@ const CinematicLoader = () => {
         }
       `}</style>
 
-      {/* Dark Overlay */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.85)',
-        zIndex: 1
-      }}></div>
-      
-      {/* Background Particles */}
-      {particles.map((p) => (
-        <div key={p.id} style={{
-          position: 'absolute',
-          left: p.left,
-          bottom: '-10%',
-          width: p.size,
-          height: p.size,
-          backgroundColor: 'var(--gold)',
-          borderRadius: '50%',
-          opacity: 0,
-          '--target-opacity': p.opacity,
-          animation: `floatUpLoader ${p.animationDuration} ease-in infinite`,
-          animationDelay: p.delay,
-          boxShadow: '0 0 5px var(--gold)',
-          zIndex: 2
-        }} />
-      ))}
-
       {/* Main Content Container */}
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
@@ -189,7 +135,7 @@ const CinematicLoader = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.3 }}
+          transition={{ duration: 1, delay: 0.2 }}
           style={{ marginBottom: '15px' }}
         >
           <div className="glim-container">
@@ -208,66 +154,6 @@ const CinematicLoader = () => {
               بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
             </h1>
           </div>
-        </motion.div>
-
-        {/* Detailed Golden Mosque SVG */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.8 }}
-          style={{ 
-            marginBottom: '35px', 
-            position: 'relative',
-            animation: 'floatUpDownIcon 3s ease-in-out infinite'
-          }}
-        >
-          {/* Radial glow */}
-          <div style={{
-            position: 'absolute',
-            top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '180px', height: '180px',
-            background: 'radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 60%)',
-            animation: 'pulseGlow 4s infinite ease-in-out',
-            zIndex: 1
-          }}></div>
-          
-          <svg width="140" height="140" viewBox="0 0 200 200" style={{ 
-            position: 'relative', 
-            zIndex: 2,
-            filter: 'drop-shadow(0 0 15px rgba(201,168,76,0.5))'
-          }}>
-            {/* Mihrab Arch */}
-            <path d="M 60 160 L 60 90 C 60 60 85 40 100 20 C 115 40 140 60 140 90 L 140 160 Z" fill="none" stroke="#c9a84c" strokeWidth="3"/>
-            <path d="M 66 160 L 66 92 C 66 65 88 48 100 30 C 112 48 134 65 134 92 L 134 160 Z" fill="none" stroke="#c9a84c" strokeWidth="1" strokeDasharray="3 3"/>
-            
-            {/* Geometric Pattern inside arch */}
-            <g opacity="0.4" stroke="#c9a84c" strokeWidth="1" fill="none">
-              <path d="M 100 60 L 85 80 L 100 100 L 115 80 Z" />
-              <path d="M 100 100 L 85 120 L 100 140 L 115 120 Z" />
-              <path d="M 85 80 L 70 100 L 85 120 L 100 100 Z" />
-              <path d="M 115 80 L 100 100 L 115 120 L 130 100 Z" />
-            </g>
-
-            {/* Left Minaret */}
-            <rect x="30" y="80" width="12" height="80" fill="none" stroke="#c9a84c" strokeWidth="2"/>
-            <path d="M 26 80 L 46 80 L 36 40 Z" fill="#c9a84c"/>
-            <rect x="25" y="100" width="22" height="4" fill="#c9a84c"/>
-            <rect x="25" y="130" width="22" height="4" fill="#c9a84c"/>
-            
-            {/* Right Minaret */}
-            <rect x="158" y="80" width="12" height="80" fill="none" stroke="#c9a84c" strokeWidth="2"/>
-            <path d="M 154 80 L 174 80 L 164 40 Z" fill="#c9a84c"/>
-            <rect x="153" y="100" width="22" height="4" fill="#c9a84c"/>
-            <rect x="153" y="130" width="22" height="4" fill="#c9a84c"/>
-
-            {/* Crescent and Star */}
-            <path d="M 100 15 A 8 8 0 1 0 108 23 A 10 10 0 1 1 100 15 Z" fill="#c9a84c" />
-            <polygon points="108,12 110,16 114,16 111,19 112,23 108,21 104,23 105,19 102,16 106,16" fill="#c9a84c"/>
-
-            {/* Base line */}
-            <rect x="20" y="160" width="160" height="4" fill="#c9a84c"/>
-          </svg>
         </motion.div>
 
         {/* English Text Reveal with glim container */}
@@ -294,7 +180,7 @@ const CinematicLoader = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.8 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="loader-tagline"
           style={{
             color: '#c9a84c',
@@ -318,7 +204,7 @@ const CinematicLoader = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 2.2 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
             style={{
               color: 'rgba(201,168,76,0.7)',
               fontSize: '12px',
@@ -333,7 +219,7 @@ const CinematicLoader = () => {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 2.0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
             style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}
           >
             {/* Left Diamond */}
@@ -343,11 +229,11 @@ const CinematicLoader = () => {
             <div className="loader-bar-outer" style={{
               width: '500px',
               height: '28px',
-              border: '1px solid rgba(201,168,76,0.5)',
+              border: '1px solid rgba(201, 168, 76, 0.5)',
               borderRadius: '4px',
               background: 'rgba(0,0,0,0.4)',
               position: 'relative',
-              padding: '2px', // space for inner bar
+              padding: '2px',
             }}>
               {/* Corner Decorations */}
               <div style={{ position: 'absolute', top: '-2px', left: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
@@ -359,7 +245,7 @@ const CinematicLoader = () => {
               <motion.div
                 initial={{ width: '0%' }}
                 animate={{ width: '100%' }}
-                transition={{ duration: 2.5, delay: 2.0, ease: "linear" }}
+                transition={{ duration: 2.2, delay: 0.0, ease: "linear" }}
                 style={{
                   height: '100%',
                   background: 'linear-gradient(90deg, rgba(201,168,76,0.3) 0%, #c9a84c 50%, #e8c96d 70%, #c9a84c 100%)',
@@ -387,7 +273,7 @@ const CinematicLoader = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 2.0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
             className="font-playfair"
             style={{
               color: '#ffffff',
@@ -403,7 +289,7 @@ const CinematicLoader = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 2.5 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           >
             <span style={{
@@ -432,14 +318,6 @@ function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    // 2.0s delay + 2.5s fill + small buffer = 4.6s total loader duration
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 4600);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
     };
@@ -451,13 +329,13 @@ function App() {
   return (
     <>
       <AnimatePresence>
-        {loading && <CinematicLoader />}
+        {loading && <CinematicLoader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
-        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         style={{ position: 'relative', width: '100%', overflow: 'hidden' }}
       >
         {/* Mouse Lighting Effect */}

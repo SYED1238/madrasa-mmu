@@ -1,230 +1,848 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 
-const AnimatedWaveBar = () => {
+// Custom Animated SVGs for Visuals
+const ManuscriptVisual = () => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', height: '30px', margin: '30px 0' }}>
-      <style>{`
-        @keyframes waveAnim {
-          0%, 100% { transform: scaleY(0.3); opacity: 0.3; }
-          50% { transform: scaleY(1); opacity: 0.8; }
-        }
-        .wave-bar {
-          width: 3px;
-          background-color: var(--gold);
-          border-radius: 2px;
-          animation: waveAnim 1.2s infinite ease-in-out;
-        }
-      `}</style>
-      {[...Array(24)].map((_, i) => {
-        // Pseudo-random heights and delays for the equalizer effect
-        const heights = [12, 24, 16, 28, 14, 20, 30, 18, 22, 10, 26, 14];
-        const height = heights[i % heights.length];
-        const delay = (i * 0.1) % 1.2;
-        return (
-          <div 
-            key={i} 
-            className="wave-bar" 
-            style={{ 
-              height: `${height}px`, 
-              animationDelay: `${delay}s` 
-            }} 
-          />
-        );
-      })}
-    </div>
+    <svg className="pillar-visual-svg" viewBox="0 0 100 100" fill="none">
+      {/* Book outline */}
+      <path d="M20 75 C35 70, 50 78, 50 78 C50 78, 65 70, 80 75 L80 25 C65 20, 50 28, 50 28 C50 28, 35 20, 20 25 Z" stroke="#c9a84c" strokeWidth="1.5" fill="rgba(201,168,76,0.05)" />
+      {/* Book center seam */}
+      <path d="M50 28 L50 78" stroke="#c9a84c" strokeWidth="1.5" />
+      {/* Text lines */}
+      <path d="M25 35 Q35 32 45 35 M25 45 Q35 42 45 45 M25 55 Q35 52 45 55 M25 65 Q35 62 45 65" stroke="rgba(201,168,76,0.4)" strokeWidth="1" strokeLinecap="round" />
+      <path d="M55 35 Q65 32 75 35 M55 45 Q65 42 75 45 M55 55 Q65 52 75 55 M55 65 Q65 62 75 65" stroke="rgba(201,168,76,0.4)" strokeWidth="1" strokeLinecap="round" />
+      {/* Floating pages/sparks */}
+      <motion.circle cx="48" cy="20" r="1.5" fill="#e8c96d" animate={{ y: [-5, -25], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }} />
+      <motion.circle cx="53" cy="15" r="2" fill="#c9a84c" animate={{ y: [0, -30], opacity: [0, 0.8, 0], scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 2.5, delay: 0.5, ease: "easeOut" }} />
+      <motion.circle cx="40" cy="18" r="1" fill="#e8c96d" animate={{ y: [-2, -20], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 1.8, delay: 0.8 }} />
+    </svg>
   );
 };
 
-const GlassCard = ({ index, num, label, labelColor, heading, subtitle, stats }) => {
+const DoorwayVisual = () => {
+  return (
+    <svg className="pillar-visual-svg" viewBox="0 0 100 100" fill="none">
+      {/* Archway Frame */}
+      <path d="M30 80 L30 45 C30 30, 40 20, 50 20 C60 20, 70 30, 70 45 L70 80 Z" stroke="#c9a84c" strokeWidth="1.5" fill="rgba(201,168,76,0.05)" />
+      {/* Inner Glowing Arch */}
+      <path d="M36 80 L36 47 C36 35, 42 27, 50 27 C58 27, 64 35, 64 47 L64 80 Z" stroke="rgba(232, 201, 109, 0.3)" strokeWidth="1" />
+      {/* Glowing light beam rays emerging from the bottom center */}
+      <motion.polygon 
+        points="50,80 20,95 80,95" 
+        fill="url(#goldGrad)" 
+        opacity="0.15" 
+        animate={{ opacity: [0.1, 0.25, 0.1] }} 
+        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }} 
+      />
+      {/* Light rays at the top */}
+      <motion.path d="M50 20 L50 10 M35 25 L25 15 M65 25 L75 15" stroke="#c9a84c" strokeWidth="1" strokeLinecap="round" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 2.2 }} />
+      <defs>
+        <radialGradient id="goldGrad" cx="50%" cy="80%" r="50%">
+          <stop offset="0%" stopColor="#e8c96d" />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+      </defs>
+    </svg>
+  );
+};
+
+const RoadmapVisual = () => {
+  return (
+    <svg className="pillar-visual-svg" viewBox="0 0 100 100" fill="none">
+      {/* Winding path */}
+      <path d="M20 70 Q40 85 50 50 T80 30" stroke="rgba(201, 168, 76, 0.2)" strokeWidth="3" strokeLinecap="round" />
+      <path d="M20 70 Q40 85 50 50 T80 30" stroke="#c9a84c" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="4 4" />
+      {/* Milestones (circles) */}
+      <circle cx="20" cy="70" r="4" fill="#0d0d1a" stroke="#c9a84c" strokeWidth="1.5" />
+      <circle cx="47" cy="56" r="4" fill="#0d0d1a" stroke="#c9a84c" strokeWidth="1.5" />
+      <circle cx="80" cy="30" r="4" fill="#0d0d1a" stroke="#c9a84c" strokeWidth="1.5" />
+      {/* Glowing pulsing markers */}
+      <motion.circle cx="20" cy="70" r="6" stroke="#e8c96d" strokeWidth="0.8" fill="transparent" animate={{ scale: [1, 1.8, 1], opacity: [0.8, 0, 0.8] }} transition={{ repeat: Infinity, duration: 2 }} />
+      <motion.circle cx="47" cy="56" r="6" stroke="#e8c96d" strokeWidth="0.8" fill="transparent" animate={{ scale: [1, 1.8, 1], opacity: [0.8, 0, 0.8] }} transition={{ repeat: Infinity, duration: 2, delay: 0.6 }} />
+      <motion.circle cx="80" cy="30" r="6" stroke="#e8c96d" strokeWidth="0.8" fill="transparent" animate={{ scale: [1, 1.8, 1], opacity: [0.8, 0, 0.8] }} transition={{ repeat: Infinity, duration: 2, delay: 1.2 }} />
+    </svg>
+  );
+};
+
+const CharacterVisual = () => {
+  return (
+    <svg className="pillar-visual-svg" viewBox="0 0 100 100" fill="none">
+      {/* Islamic Arch outline */}
+      <path d="M25 80 L25 50 C25 35, 38 25, 50 15 C62 25, 75 35, 75 50 L75 80 Z" stroke="rgba(201, 168, 76, 0.2)" strokeWidth="1.5" />
+      {/* Star outline in center */}
+      <g transform="translate(50, 50)">
+        <motion.g animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 25, ease: "linear" }}>
+          <rect x="-15" y="-15" width="30" height="30" rx="1" stroke="#c9a84c" strokeWidth="1.2" fill="rgba(201, 168, 76, 0.05)" />
+          <rect x="-15" y="-15" width="30" height="30" rx="1" stroke="#c9a84c" strokeWidth="1.2" fill="rgba(201, 168, 76, 0.05)" transform="rotate(45)" />
+        </motion.g>
+      </g>
+      {/* Center glowing circle */}
+      <circle cx="50" cy="50" r="4" fill="#e8c96d" />
+      <motion.circle cx="50" cy="50" r="8" stroke="#e8c96d" strokeWidth="0.5" fill="transparent" animate={{ scale: [1, 1.6, 1], opacity: [0.5, 0.8, 0.5] }} transition={{ repeat: Infinity, duration: 3 }} />
+    </svg>
+  );
+};
+
+// Monumental Pillar Card Component
+const PillarCard = ({ pillar, isInView }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay: index * 0.2 }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className="pillar-luxury-card"
       style={{
-        background: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: isHovered ? '1px solid rgba(201, 168, 76, 0.5)' : '1px solid rgba(201, 168, 76, 0.15)',
-        borderRadius: '20px',
-        padding: '40px',
-        boxShadow: isHovered ? '0 8px 32px rgba(201, 168, 76, 0.1)' : '0 8px 32px rgba(0, 0, 0, 0.4)',
-        transition: 'all 0.4s ease',
-        cursor: 'none',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between'
+        width: '100%',
+        textAlign: 'left',
+        background: 'rgba(18, 18, 31, 0.4)',
+        border: '1px solid rgba(201, 168, 76, 0.12)',
+        display: 'block'
       }}
     >
-      <div>
-        {/* Top Label */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-          <span className="font-playfair" style={{ color: 'var(--gold-dim)', fontSize: '20px', fontWeight: 'bold' }}>
-            {num}
-          </span>
-          <span style={{ color: labelColor, fontSize: '13px', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>
-            {label}
-          </span>
+      <div className="pillar-glow-overlay" style={{ opacity: isHovered ? 1 : 0 }} />
+      <div className={`pillar-border-glow ${isHovered ? 'active' : ''}`} />
+
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        {/* Top Row: Number & Label */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
+          <span className="font-playfair pillar-num">{pillar.num}</span>
+          <span className="pillar-label">{pillar.label}</span>
+        </div>
+
+        {/* Custom SVG Visual Box */}
+        <div className="pillar-visual-box">
+          {pillar.visualType === "manuscript" && <ManuscriptVisual />}
+          {pillar.visualType === "doorway" && <DoorwayVisual />}
+          {pillar.visualType === "roadmap" && <RoadmapVisual />}
+          {pillar.visualType === "character" && <CharacterVisual />}
         </div>
 
         {/* Headings */}
-        <h3 className="font-playfair" style={{ color: 'var(--text-primary)', fontSize: '36px', marginBottom: '10px', lineHeight: '1.2' }}>
-          {heading}
-        </h3>
-        <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px' }}>
-          {subtitle}
-        </p>
-      </div>
+        <h3 className="font-playfair pillar-heading">{pillar.title}</h3>
+        <h4 className="pillar-subtitle">{pillar.subtitle}</h4>
+        <p className="pillar-desc">{pillar.desc}</p>
 
-      {/* Middle Decorative Wave */}
-      <AnimatedWaveBar />
-
-      {/* Bottom Stats Grid */}
-      <div className="stat-grid-container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-        {stats.map((stat, i) => (
-          <div key={i} className="stat-box" style={{
-            background: 'var(--bg-primary)',
-            padding: '15px',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '5px'
-          }}>
-            <span style={{ color: 'var(--text-primary)', fontSize: '18px', fontWeight: '700' }}>
-              {stat.value}
-            </span>
-            <span style={{ color: 'var(--text-muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              {stat.label}
-            </span>
-          </div>
-        ))}
+        {/* Metrics Grid */}
+        <div className="pillar-metrics-grid">
+          {pillar.metrics.map((metric, i) => (
+            <div key={i} className="pillar-metric-item">
+              <span className="pillar-metric-val">{metric.value}</span>
+              <span className="pillar-metric-lbl">{metric.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
 };
 
+// Main Component
 const WhyUs = () => {
-  const cards = [
+  const containerRef = useRef(null);
+  const bottomRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
+
+  const pathScale = useTransform(scrollYProgress, [0.05, 0.95], [0, 1]);
+  const calligraphyY = useTransform(scrollYProgress, [0, 1], [-130, 130]);
+  const starRotate = useTransform(scrollYProgress, [0, 1], [0, 75]);
+
+  const isBottomInView = useInView(bottomRef, { once: true, margin: "-10%" });
+
+  const pillarsData = [
     {
-      label: "QUALIFIED SCHOLARS",
-      labelColor: "#c9a84c", // Gold
-      heading: "Expert Ustaads",
+      num: "01",
+      label: "Scholarship",
+      title: "Expert Ustaads",
       subtitle: "Trained For Excellence.",
-      stats: [
+      desc: "Our educators are qualified scholars who bring deep traditional understanding and academic rigor, ensuring proper guidance for every student.",
+      metrics: [
         { value: "15+", label: "Ustaads" },
-        { value: "100%", label: "Dedicated" },
-        { value: "20+", label: "Years Avg" },
-        { value: "5★", label: "Rated" }
-      ]
+        { value: "20+ Yrs", label: "Avg Experience" },
+        { value: "100%", label: "Dedicated" }
+      ],
+      visualType: "manuscript"
     },
     {
-      label: "FREE EDUCATION",
-      labelColor: "#2d9b7f", // Teal
-      heading: "Affordable For All",
+      num: "02",
+      label: "Accessibility",
+      title: "Knowledge For Everyone",
       subtitle: "No Child Left Behind.",
-      stats: [
+      desc: "We believe sacred learning should be open to all. Thanks to generous community backing, we offer fully subsidized, free basic education.",
+      metrics: [
         { value: "500+", label: "Students" },
-        { value: "100%", label: "Welcome" },
-        { value: "Free", label: "Basic" },
-        { value: "Zakat", label: "Funded" }
-      ]
+        { value: "Subsidized", label: "Education" },
+        { value: "Open", label: "To All" }
+      ],
+      visualType: "doorway"
     },
     {
-      label: "CURRICULUM",
-      labelColor: "#8b5cf6", // Purple
-      heading: "Structured Learning",
-      subtitle: "From Beginner To Scholar.",
-      stats: [
-        { value: "6", label: "Programs" },
+      num: "03",
+      label: "Learning",
+      title: "Structured Path To Excellence",
+      subtitle: "Milestones Of Growth.",
+      desc: "Our curriculum leads students from basic alphabets and Tajweed to complete memorization and deep comprehension across key languages.",
+      metrics: [
+        { value: "Multiple", label: "Programs" },
         { value: "4", label: "Languages" },
-        { value: "Quran", label: "Core" },
         { value: "Daily", label: "Classes" }
-      ]
+      ],
+      visualType: "roadmap"
     },
     {
-      label: "ENVIRONMENT",
-      labelColor: "#e8845a", // Coral
-      heading: "Safe & Nurturing",
-      subtitle: "Built On Islamic Values.",
-      stats: [
+      num: "04",
+      label: "Character",
+      title: "Building Future Leaders",
+      subtitle: "Values Over Subjects.",
+      desc: "Education is incomplete without Adab (character). We nurture moral values, self-discipline, and community service in a safe environment.",
+      metrics: [
+        { value: "Adab First", label: "Priority" },
         { value: "Safe", label: "Campus" },
-        { value: "Pure", label: "Environment" },
-        { value: "Adab", label: "First" },
-        { value: "Community", label: "Backed" }
-      ]
+        { value: "Strong", label: "Moral Values" }
+      ],
+      visualType: "character"
     }
   ];
 
+  const calligraphyData = [
+    { arabic: "العلم", english: "ILM" },
+    { arabic: "الإيمان", english: "IMAAN" },
+    { arabic: "الإخلاص", english: "IKHLAAS" }
+  ];
+
   return (
-    <section id="whyus" style={{ padding: '120px 5%', backgroundColor: 'var(--bg-primary)', position: 'relative' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+    <section
+      id="whyus"
+      ref={containerRef}
+      style={{
+        position: 'relative',
+        padding: '120px 5%',
+        backgroundColor: '#050508',
+        backgroundImage: 'radial-gradient(circle at 50% 50%, #0d0d1a 0%, #050508 75%, #020204 100%)',
+        overflow: 'hidden'
+      }}
+    >
+      <style>{`
+        /* Calligraphy background text */
+        .pillars-calligraphy-bg {
+          position: absolute;
+          font-family: 'Amiri', serif;
+          font-size: 15vw;
+          color: rgba(201, 168, 76, 0.02);
+          user-select: none;
+          pointer-events: none;
+          white-space: nowrap;
+          z-index: 1;
+        }
+
+        /* Light Rays */
+        .pillars-light-ray {
+          position: absolute;
+          width: 55vw;
+          height: 55vw;
+          background: radial-gradient(circle, rgba(201, 168, 76, 0.03) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        /* Connected Journey Timeline Line */
+        .pillars-timeline-wrapper {
+          position: relative;
+          max-width: 1050px;
+          margin: 90px auto 0 auto;
+        }
+        .pillars-path-background {
+          position: absolute;
+          left: 50%;
+          top: 50px;
+          bottom: 50px;
+          width: 2px;
+          background: rgba(201, 168, 76, 0.08);
+          transform: translateX(-50%);
+          z-index: 1;
+        }
+        .pillars-path-foreground {
+          position: absolute;
+          left: 50%;
+          top: 50px;
+          bottom: 50px;
+          width: 2px;
+          background: linear-gradient(to bottom, #c9a84c, #e8c96d, #c9a84c);
+          transform: translateX(-50%);
+          transform-origin: top;
+          z-index: 2;
+          box-shadow: 0 0 12px rgba(201, 168, 76, 0.5);
+        }
+
+        /* Alternating grid rows */
+        .pillars-timeline-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 90px;
+          margin-bottom: 90px;
+          position: relative;
+        }
+        .pillars-timeline-row:last-child {
+          margin-bottom: 0;
+        }
+        .pillars-row-half {
+          position: relative;
+          z-index: 5;
+        }
+
+        /* Center Calligraphy badges */
+        .timeline-badge-container {
+          position: absolute;
+          left: 50%;
+          bottom: -45px;
+          transform: translate(-50%, 50%);
+          z-index: 10;
+        }
+        .calligraphy-center-badge {
+          background: #090914;
+          border: 1px solid rgba(201, 168, 76, 0.35);
+          border-radius: 50%;
+          width: 76px;
+          height: 76px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 25px rgba(201, 168, 76, 0.25), inset 0 0 10px rgba(201, 168, 76, 0.15);
+          transition: all 0.4s ease;
+        }
+        .calligraphy-center-badge:hover {
+          transform: scale(1.1);
+          border-color: #e8c96d;
+          box-shadow: 0 0 35px rgba(201, 168, 76, 0.5);
+        }
+        .badge-calligraphy-text {
+          font-family: 'Amiri', serif;
+          font-size: 20px;
+          color: #c9a84c;
+          line-height: 1;
+        }
+        .badge-english-text {
+          font-size: 8px;
+          letter-spacing: 1.5px;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          margin-top: 1px;
+        }
+
+        /* Pillar Card Details */
+        .pillar-luxury-card {
+          background: rgba(18, 18, 31, 0.4);
+          backdrop-filter: blur(25px);
+          -webkit-backdrop-filter: blur(25px);
+          border: 1px solid rgba(201, 168, 76, 0.12);
+          border-radius: 20px;
+          padding: 40px;
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+          position: relative;
+          overflow: hidden;
+          transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .pillar-luxury-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(201, 168, 76, 0.35);
+          box-shadow: 0 20px 45px rgba(201, 168, 76, 0.08);
+        }
+        .pillar-glow-overlay {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 50% 30%, rgba(201, 168, 76, 0.06) 0%, transparent 60%);
+          pointer-events: none;
+          transition: opacity 0.5s ease;
+          z-index: 1;
+        }
+        .pillar-border-glow {
+          position: absolute;
+          top: -50%; left: -50%;
+          width: 200%; height: 200%;
+          background: conic-gradient(from 0deg, transparent 65%, rgba(201, 168, 76, 0.18) 85%, transparent 100%);
+          animation: rotateGlow 6s linear infinite;
+          pointer-events: none;
+          z-index: 2;
+          opacity: 0;
+          transition: opacity 0.5s ease;
+        }
+        .pillar-border-glow.active {
+          opacity: 1;
+        }
+
+        /* Visual Box container */
+        .pillar-visual-box {
+          width: 100%;
+          height: 130px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 25px;
+          background: rgba(5, 5, 8, 0.35);
+          border: 1px solid rgba(255, 255, 255, 0.015);
+          border-radius: 12px;
+          position: relative;
+        }
+        .pillar-visual-svg {
+          width: 90px;
+          height: 90px;
+        }
+
+        /* Card Typography */
+        .pillar-num {
+          font-size: 32px;
+          font-weight: 300;
+          color: rgba(201, 168, 76, 0.3);
+          letter-spacing: 1px;
+        }
+        .pillar-label {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          color: #c9a84c;
+          text-transform: uppercase;
+        }
+        .pillar-heading {
+          font-size: 25px;
+          color: #ffffff;
+          margin-bottom: 6px;
+          font-weight: 400;
+        }
+        .pillar-subtitle {
+          font-size: 13px;
+          color: #c9a84c;
+          margin-bottom: 16px;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+        }
+        .pillar-desc {
+          font-size: 14px;
+          color: var(--text-muted);
+          line-height: 1.6;
+          margin-bottom: 30px;
+        }
+
+        /* Metrics Grid inside card */
+        .pillar-metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          padding-top: 25px;
+        }
+        .pillar-metric-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          background: rgba(5, 5, 8, 0.25);
+          padding: 10px 5px;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.03);
+          transition: all 0.3s ease;
+        }
+        .pillar-luxury-card:hover .pillar-metric-item {
+          border-color: rgba(201, 168, 76, 0.15);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .pillar-metric-val {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #ffffff;
+        }
+        .pillar-metric-lbl {
+          font-size: 9.5px;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-top: 2px;
+        }
+
+        @keyframes rotateGlow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        /* Manuscript Modal Styles */
+        .manuscript-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(2, 2, 4, 0.8);
+          backdrop-filter: blur(15px);
+          -webkit-backdrop-filter: blur(15px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 20px;
+        }
+        .manuscript-modal-content {
+          background: radial-gradient(circle at 50% 50%, #0e0e1a 0%, #06060c 100%);
+          border: 1px solid rgba(201, 168, 76, 0.35);
+          border-radius: 24px;
+          width: 100%;
+          max-width: 650px;
+          padding: 50px 40px;
+          box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(201, 168, 76, 0.12);
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Corner accents */
+        .manuscript-corner {
+          position: absolute;
+          font-size: 14px;
+          color: rgba(201, 168, 76, 0.3);
+          pointer-events: none;
+          user-select: none;
+        }
+        .manuscript-corner.top-left { top: 15px; left: 15px; }
+        .manuscript-corner.top-right { top: 15px; right: 15px; }
+        .manuscript-corner.bottom-left { bottom: 15px; left: 15px; }
+        .manuscript-corner.bottom-right { bottom: 15px; right: 15px; }
+
+        /* Header */
+        .manuscript-header {
+          text-align: center;
+          margin-bottom: 25px;
+        }
+        .manuscript-pillar-num {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          color: #c9a84c;
+          text-transform: uppercase;
+        }
+        .manuscript-title {
+          font-size: 30px;
+          color: #ffffff;
+          margin-top: 5px;
+          margin-bottom: 8px;
+          font-weight: 300;
+        }
+        .manuscript-calligraphy-icon {
+          font-family: 'Amiri', serif;
+          font-size: 26px;
+          color: rgba(201, 168, 76, 0.5);
+          line-height: 1;
+        }
+
+        /* Tab buttons */
+        .manuscript-tabs-row {
+          display: flex;
+          justify-content: center;
+          gap: 15px;
+          margin-bottom: 35px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 15px;
+        }
+        .manuscript-tab-btn {
+          background: transparent;
+          border: none;
+          color: var(--text-muted);
+          font-size: 11.5px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          padding: 6px 12px;
+          cursor: none;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+        .manuscript-tab-btn:hover {
+          color: #c9a84c;
+        }
+        .manuscript-tab-btn.active {
+          color: #c9a84c;
+          font-weight: 700;
+        }
+        .manuscript-tab-btn.active::after {
+          content: "";
+          position: absolute;
+          bottom: -16px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: #c9a84c;
+          box-shadow: 0 0 10px #c9a84c;
+        }
+
+        /* Content pane */
+        .manuscript-body {
+          min-height: 230px;
+        }
+        .manuscript-arabic-verse {
+          font-size: 24px;
+          text-align: center;
+          color: #e8c96d;
+          line-height: 1.8;
+          margin-bottom: 20px;
+          text-shadow: 0 0 15px rgba(232, 201, 109, 0.25);
+          font-family: 'Amiri', serif;
+        }
+        .manuscript-translation {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 18px;
+          line-height: 1.6;
+          color: #f0ede4;
+          text-align: center;
+          font-style: italic;
+          margin-bottom: 8px;
+        }
+        .manuscript-citation {
+          font-size: 12px;
+          color: var(--text-muted);
+          text-align: center;
+          margin-bottom: 25px;
+          letter-spacing: 0.5px;
+        }
+        .manuscript-explanation {
+          font-size: 14px;
+          color: var(--text-muted);
+          line-height: 1.65;
+          text-align: justify;
+        }
+        .manuscript-reflection-heading {
+          font-family: 'Playfair Display', serif;
+          font-size: 19px;
+          color: #ffffff;
+          margin-bottom: 12px;
+          text-align: center;
+        }
+        .manuscript-reflection-text {
+          font-size: 14.5px;
+          color: #e6e2da;
+          line-height: 1.7;
+          text-align: justify;
+        }
+
+        /* Close button */
+        .manuscript-close-btn {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.4);
+          cursor: none;
+          transition: all 0.3s ease;
+        }
+        .manuscript-close-btn:hover {
+          color: #c9a84c;
+          transform: scale(1.1);
+        }
+
+        @media (max-width: 900px) {
+          .pillars-path-background,
+          .pillars-path-foreground {
+            left: 20px !important;
+            transform: none !important;
+            top: 40px;
+            bottom: 40px;
+          }
+          .pillars-timeline-row {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+            margin-bottom: 50px !important;
+            padding-left: 45px !important;
+          }
+          .pillars-row-half.empty {
+            display: none !important;
+          }
+          .timeline-badge-container {
+            display: none !important; /* Hide center badges on mobile to prevent clutter */
+          }
+        }
+
+        @media (max-width: 768px) {
+          .manuscript-modal-content {
+            height: 100%;
+            max-height: 100vh;
+            border-radius: 0;
+            padding: 70px 20px 40px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+          }
+          .manuscript-modal-overlay {
+            padding: 0;
+          }
+          .manuscript-close-btn {
+            top: 25px;
+            right: 25px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .pillars-timeline-row {
+            padding-left: 35px !important;
+          }
+          .pillars-path-background,
+          .pillars-path-foreground {
+            left: 15px !important;
+          }
+          .pillar-metrics-grid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+        }
+      `}</style>
+
+      {/* Atmospheric calligraphy */}
+      <motion.div style={{ y: calligraphyY, top: '8%', left: '-6%' }} className="pillars-calligraphy-bg">
+        العلم نور
+      </motion.div>
+      <motion.div style={{ y: calligraphyY, bottom: '10%', right: '-8%' }} className="pillars-calligraphy-bg">
+        نور على نور
+      </motion.div>
+
+      {/* Volumetric light rays */}
+      <motion.div style={{ rotate: 12, top: '-5%', right: '15%' }} className="pillars-light-ray" />
+      <motion.div style={{ rotate: -18, bottom: '5%', left: '8%' }} className="pillars-light-ray" />
+
+      {/* Floating particles */}
+      <motion.div style={{ y: calligraphyY, top: '22%', left: '78%', width: '3px', height: '3px', backgroundColor: '#c9a84c', borderRadius: '50%', boxShadow: '0 0 6px #c9a84c', position: 'absolute', pointerEvents: 'none', zIndex: 1 }} />
+      <motion.div style={{ y: calligraphyY, top: '68%', left: '16%', width: '4px', height: '4px', backgroundColor: '#e8c96d', borderRadius: '50%', boxShadow: '0 0 8px #e8c96d', position: 'absolute', pointerEvents: 'none', zIndex: 1 }} />
+
+      <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 5 }}>
         
-        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-          <h2 className="font-playfair text-gold" style={{ fontSize: '48px', marginBottom: '10px' }}>
-            Why Choose Us
+        {/* Section Intro */}
+        <div style={{ textAlign: 'center', marginBottom: '70px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '18px' }}>
+            <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
+            <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase' }}>
+              Our Foundation
+            </span>
+            <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
+          </div>
+
+          <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
+            Built Upon Four<br/>Timeless <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Pillars</span>
           </h2>
-          <p style={{ color: 'var(--text-muted)' }}>The foundations of our institution</p>
+          
+          <p style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '720px', margin: '0 auto', lineHeight: '1.7', padding: '0 15px' }}>
+            Every student who walks through our doors benefits from a carefully balanced foundation of scholarship, accessibility, structured learning, and Islamic character.
+          </p>
         </div>
 
-        <div className="grid-container" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
-          gap: '40px'
-        }}>
-          <style>{`
-            @media (max-width: 768px) {
-              #whyus .grid-container {
-                grid-template-columns: 1fr !important;
-              }
-            }
-          `}</style>
+        {/* Alternate connected timeline wrapper */}
+        <div className="pillars-timeline-wrapper">
           
-          {cards.map((card, idx) => (
-            <GlassCard
-              key={idx}
-              index={idx}
-              num={String(idx + 1).padStart(2, '0')}
-              label={card.label}
-              labelColor={card.labelColor}
-              heading={card.heading}
-              subtitle={card.subtitle}
-              stats={card.stats}
-            />
-          ))}
+          {/* Timeline lines */}
+          <div className="pillars-path-background" />
+          <motion.div 
+            style={{ scaleY: pathScale }}
+            className="pillars-path-foreground" 
+          />
+
+          {/* Render Timeline Rows */}
+          {pillarsData.map((pillar, idx) => {
+            const isLeft = idx % 2 === 0;
+            return (
+              <TimelineRow 
+                key={idx}
+                pillar={pillar}
+                index={idx}
+                isLeft={isLeft}
+                calligraphyData={calligraphyData}
+              />
+            );
+          })}
+
         </div>
+
+        {/* Bottom Statement */}
+        <div ref={bottomRef} style={{ marginTop: '120px', textAlign: 'center' }}>
+          <AnimatePresence>
+            {isBottomInView && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}
+              >
+                <span 
+                  className="font-playfair text-gold" 
+                  style={{ 
+                    fontSize: 'clamp(24px, 3.8vw, 38px)', 
+                    fontWeight: '300', 
+                    lineHeight: '1.4',
+                    maxWidth: '850px',
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Knowledge. Faith. Character. Service.
+                </span>
+                
+                <span 
+                  style={{ 
+                    color: 'var(--text-muted)', 
+                    fontSize: '16px', 
+                    fontStyle: 'italic',
+                    marginTop: '8px'
+                  }}
+                >
+                  These are not subjects we teach. They are values we live.
+                </span>
+                
+                {/* Scroll-reveal divider */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '20px', marginTop: '45px' }}>
+                  <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to right, transparent, rgba(201,168,76,0.25))' }} />
+                  <motion.svg style={{ rotate: starRotate, color: '#c9a84c', opacity: 0.8 }} width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <rect x="6" y="6" width="12" height="12" transform="rotate(45 12 12)" stroke="currentColor" strokeWidth="1.2" />
+                    <circle cx="12" cy="12" r="3.5" fill="currentColor" />
+                  </motion.svg>
+                  <div style={{ height: '1px', flex: 1, background: 'linear-gradient(to left, transparent, rgba(201,168,76,0.25))' }} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
       </div>
-      
-      {/* Subtle Background Glows for Glassmorphism */}
-      <div style={{
-        position: 'absolute',
-        top: '30%',
-        left: '-10%',
-        width: '500px',
-        height: '500px',
-        background: 'radial-gradient(circle, rgba(201,168,76,0.03) 0%, transparent 70%)',
-        borderRadius: '50%',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        bottom: '10%',
-        right: '-10%',
-        width: '600px',
-        height: '600px',
-        background: 'radial-gradient(circle, rgba(45,155,127,0.03) 0%, transparent 70%)',
-        borderRadius: '50%',
-        zIndex: 1,
-        pointerEvents: 'none'
-      }}></div>
     </section>
+  );
+};
+
+// Timeline Row helper component to isolate layout states
+const TimelineRow = ({ pillar, index, isLeft, calligraphyData }) => {
+  const rowRef = useRef(null);
+  const isInView = useInView(rowRef, { once: true, margin: "-100px" });
+
+  return (
+    <div ref={rowRef} className="pillars-timeline-row">
+      
+      {/* Left Column half */}
+      <div className={`pillars-row-half left-half ${isLeft ? '' : 'empty'}`}>
+        {isLeft && <PillarCard pillar={pillar} isInView={isInView} />}
+      </div>
+
+      {/* Right Column half */}
+      <div className={`pillars-row-half right-half ${!isLeft ? '' : 'empty'}`}>
+        {!isLeft && <PillarCard pillar={pillar} isInView={isInView} />}
+      </div>
+
+      {/* Center Calligraphy Badge (positioned between rows 1-2, 2-3, 3-4) */}
+      {index < 3 && (
+        <div className="timeline-badge-container">
+          <div 
+            className="calligraphy-center-badge"
+          >
+            <span className="badge-calligraphy-text">{calligraphyData[index].arabic}</span>
+            <span className="badge-english-text">{calligraphyData[index].english}</span>
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 };
 
