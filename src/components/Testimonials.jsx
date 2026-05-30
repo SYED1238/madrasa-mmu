@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const FloatingVerseParticles = () => {
   const particles = useRef(
@@ -36,6 +37,9 @@ const FloatingVerseParticles = () => {
 };
 
 const Testimonials = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const sectionRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -320,14 +324,28 @@ const Testimonials = () => {
         <div style={{ textAlign: 'center', marginBottom: '55px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '18px' }}>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '45px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
-            <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase' }}>
-              Divine Wisdom
+            <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase', fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>
+              {t('testimonials.wisdomEyebrow')}
             </span>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '45px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
           </div>
 
-          <h2 className="font-playfair" style={{ fontSize: 'clamp(32px, 5vw, 50px)', color: '#ffffff', fontWeight: '300', marginBottom: '15px', lineHeight: '1.2' }}>
-            Nurturing Minds With <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Sacred Light</span>
+          <h2 className="font-playfair" style={{ fontSize: 'clamp(32px, 5vw, 50px)', color: '#ffffff', fontWeight: '300', marginBottom: '15px', lineHeight: isUrdu ? '2' : '1.2' }}>
+            {isUrdu ? (
+              <>
+                <span style={{ color: '#c9a84c', fontStyle: 'italic', fontFamily: "'Noto Nastaliq Urdu', 'Amiri', serif" }}>
+                  {t('testimonials.wisdomTitleAccent')}
+                </span>{' '}
+                {t('testimonials.wisdomTitle')}
+              </>
+            ) : (
+              <>
+                {t('testimonials.wisdomTitle')}{' '}
+                <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>
+                  {t('testimonials.wisdomTitleAccent')}
+                </span>
+              </>
+            )}
           </h2>
         </div>
 
@@ -340,7 +358,7 @@ const Testimonials = () => {
             className="quran-verse-card"
           >
             <h3 className="quran-arabic-text">
-              وَقُلْ رَبِّ زِدْنِي عِلْمًا
+              {t('testimonials.arabicVerse')}
             </h3>
 
             {/* Elegant Calligraphy Divider */}
@@ -358,11 +376,11 @@ const Testimonials = () => {
               <div className="quran-divider-line" />
             </div>
 
-            <p className="quran-english-text">
-              “And say: My Lord, increase me in knowledge.”
+            <p className={`quran-english-text ${isUrdu ? 'ur-text' : ''}`} style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined, fontStyle: isUrdu ? 'normal' : 'italic' }}>
+              {t('testimonials.verseTranslation')}
             </p>
-            <span className="quran-reference-text">
-              (Surah Taha 20:114)
+            <span className="quran-reference-text" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>
+              {t('testimonials.verseReference')}
             </span>
           </motion.div>
         )}
@@ -370,20 +388,20 @@ const Testimonials = () => {
         {/* Compact Educational Impact strip */}
         <div className="impact-strip">
           <div className="impact-item">
-            <span className="impact-stat">500+</span>
-            <span className="impact-label">Students Educated</span>
+            <span className="impact-stat" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statStudentsVal')}</span>
+            <span className={`impact-label ${isUrdu ? 'ur-text' : ''}`} style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statStudentsLabel')}</span>
           </div>
           <div className="impact-item">
-            <span className="impact-stat">15+</span>
-            <span className="impact-label">Years of Service</span>
+            <span className="impact-stat" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statYearsVal')}</span>
+            <span className={`impact-label ${isUrdu ? 'ur-text' : ''}`} style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statYearsLabel')}</span>
           </div>
           <div className="impact-item">
-            <span className="impact-stat">Quran & Hadith</span>
-            <span className="impact-label">Studies Focus</span>
+            <span className="impact-stat" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statFocusVal')}</span>
+            <span className={`impact-label ${isUrdu ? 'ur-text' : ''}`} style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statFocusLabel')}</span>
           </div>
           <div className="impact-item">
-            <span className="impact-stat">Community</span>
-            <span className="impact-label">Focused Reach</span>
+            <span className="impact-stat" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statReachVal')}</span>
+            <span className={`impact-label ${isUrdu ? 'ur-text' : ''}`} style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('testimonials.statReachLabel')}</span>
           </div>
         </div>
 

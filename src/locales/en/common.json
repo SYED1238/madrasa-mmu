@@ -1,0 +1,355 @@
+{
+  "loader": {
+    "bismillah": "بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ",
+    "name": "Madrasa e Madeenatul Uloom",
+    "motto": "ILM • IMAAN • IKHLAAS",
+    "loading": "L O A D I N G . . .",
+    "tagline": "✦ SEEKING KNOWLEDGE • SERVING UMMAH ✦"
+  },
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "programs": "Programs",
+    "gallery": "Gallery",
+    "admissions": "Admissions",
+    "contact": "Contact",
+    "motto": "طلب العلم فريضة على كل مسلم",
+    "location": "✦ Ramanagara ✦"
+  },
+  "hero": {
+    "est": "Est. Ramanagara, Karnataka",
+    "titleLine1": "Madrasa",
+    "titleLine2": "Madeenatul",
+    "titleLine3": "Uloom",
+    "motto": {
+      "seeking": "Seeking Knowledge",
+      "strengthening": "Strengthening Faith",
+      "serving": "Serving Humanity"
+    },
+    "tagline": "Where Faith <em>Meets</em> Knowledge",
+    "description": "A prestigious Islamic institution nurturing scholars, character, and faith in the heart of Ramanagara.",
+    "enrollBtn": "Enroll Your Child",
+    "programsBtn": "Explore Programs"
+  },
+  "stats": {
+    "years": "Years of Service",
+    "students": "Students Enrolled",
+    "ustaads": "Qualified Ustaads",
+    "community": "Community Members",
+    "studentsLabel": "Students",
+    "yearsLabel": "Years",
+    "hoursLabel": "Learning Hours",
+    "trustLabel": "MMU Trust"
+  },
+  "about": {
+    "eyebrow": "Our Legacy",
+    "subtitle": "\"For years, Madrasa-e-Madeenatul Uloom has served as a sanctuary of Quranic scholarship, Islamic values, character development, and selfless community empowerment in Ramanagara.\"",
+    "milestonesTitle": "Spiritual Milestones",
+    "sanctuaryTitle": "The Sanctuary",
+    "impactTitle": "Educational Impact",
+    "pillarsTitle": "Core Pillars",
+    "pillarsSubtitle": "The spiritual foundations guiding every student and scholar.",
+    "clickExplore": "Click to Explore ✦",
+    "seekingKnowledge": "Seeking Knowledge.",
+    "strengtheningFaith": "Strengthening Faith.",
+    "servingHumanity": "Serving Humanity.",
+    "milestones": [
+      {
+        "year": "2007",
+        "title": "Foundation of MMU Trust",
+        "desc": "Founded under the noble guidance of Shri Haji Syed Muneer to build a strong educational foundation and welfare network in Ramanagara."
+      },
+      {
+        "year": "2009",
+        "title": "Beginning of Quranic Education",
+        "desc": "Commenced dedicated Nazira and Hifz classes, introducing a rigorous curriculum of Tajweed (pronunciation) and spiritual refinement."
+      },
+      {
+        "year": "2014",
+        "title": "Hundreds of Students Educated",
+        "desc": "Expanded capacity to host hundreds of children. Our doors remain open to all students, offering education, lodging, and books entirely free."
+      },
+      {
+        "year": "2020",
+        "title": "Community Development Initiatives",
+        "desc": "Launched extensive community outreach drives, distributing food packets, support resources, and hosting civic engagement programs."
+      },
+      {
+        "year": "Present & Future",
+        "title": "Modern Digital Integration",
+        "desc": "Incorporating modern computer literacy programs and digital tools alongside our traditional curriculum, preparing scholars for contemporary leadership."
+      }
+    ],
+    "metrics": {
+      "students": "Students Educated",
+      "years": "Years Of Service",
+      "programs": "Quran Memorization Programs",
+      "community": "Community Reach"
+    },
+    "pillars": {
+      "ilm": {
+        "title": "ILM",
+        "label": "— Knowledge —",
+        "desc": "The foundation of all action and insight. We cultivate rigorous Quranic scholarship alongside secular wisdom to develop enlightened minds."
+      },
+      "imaan": {
+        "title": "IMAAN",
+        "label": "— Faith —",
+        "desc": "Connecting the heart to the Creator. We nurture deep spiritual conviction and moral integrity, modeling life after the beautiful Sunnah."
+      },
+      "ikhlaas": {
+        "title": "IKHLAAS",
+        "label": "— Sincerity —",
+        "desc": "Purity of intent in every endeavor. We instill the mindset that all study, teaching, and community service must be performed solely for the sake of Allah."
+      }
+    },
+    "modal": {
+      "pillar": "Pillar",
+      "tabQuran": "quran",
+      "tabHadith": "hadith",
+      "tabReflection": "reflection",
+      "reflectionHeading": "MMU Spiritual Integration"
+    },
+    "referenceData": [
+      {
+        "name": "Ilm (Knowledge)",
+        "quran": {
+          "translation": "Say, 'Are those who know equal to those who do not know?'",
+          "citation": "Surah Az-Zumar 39:9",
+          "explanation": "Knowledge elevates a believer. The Quran repeatedly emphasizes that those endowed with knowledge possess a deeper understanding of reality, spiritual direction, and a higher standing before Allah."
+        },
+        "hadith": {
+          "translation": "Seeking knowledge is an obligation upon every Muslim.",
+          "citation": "Sunan Ibn Majah",
+          "explanation": "Acquiring knowledge is not a luxury or optional pursuit in Islam; it is an active spiritual duty binding on every individual, regardless of gender or social status."
+        },
+        "reflection": {
+          "text": "Knowledge (Ilm) is the foundation of action. Without understanding, worship lacks depth and character lacks direction. At MMU, we make high-quality Islamic learning accessible to everyone through professional scholars."
+        }
+      },
+      {
+        "name": "Imaan (Faith)",
+        "quran": {
+          "translation": "The believers are only those who, when Allah is mentioned, their hearts become fearful.",
+          "citation": "Surah Al-Anfal 8:2",
+          "explanation": "True faith (Imaan) is not merely a verbal statement; it is a profound emotional state that softens the heart, creating awe and reverence whenever Allah is remembered."
+        },
+        "hadith": {
+          "translation": "None of you truly believes until he loves for his brother what he loves for himself.",
+          "citation": "Sahih Al-Bukhari & Sahih Muslim",
+          "explanation": "Genuine faith is inextricably linked to how we treat others. Seeking success, safety, and guidance for our fellow brothers and sisters is a core parameter of Imaan."
+        },
+        "reflection": {
+          "text": "Faith (Imaan) is a seed that must be watered with action and community service. We foster a supportive environment where students cultivate deep personal connection with their Creator and display empathy for humanity."
+        }
+      },
+      {
+        "name": "Ikhlaas (Sincerity)",
+        "quran": {
+          "translation": "And they were not commanded except to worship Allah, being sincere to Him in religion.",
+          "citation": "Surah Al-Bayyinah 98:5",
+          "explanation": "Every act of worship must be directed solely to Allah. Sincerity (Ikhlaas) is the spiritual filter that ensures our religious deeds are accepted and free from ostentation."
+        },
+        "hadith": {
+          "translation": "Actions are judged by intentions.",
+          "citation": "Sahih Al-Bukhari",
+          "explanation": "The value of any deed lies in the underlying intention. A simple worldly action performed with a pure intention can earn immense reward, while a spiritual deed done for show has no value."
+        },
+        "reflection": {
+          "text": "Sincerity (Ikhlaas) is the soul of our actions. We teach our students to continuously audit their intentions, seeking only the pleasure of Allah in their learning, teaching, and serving journeys."
+        }
+      }
+    ]
+  },
+  "whyUs": {
+    "eyebrow": "Our Foundation",
+    "heading": "Built Upon Four Timeless Pillars",
+    "description": "Every student who walks through our doors benefits from a carefully balanced foundation of scholarship, accessibility, structured learning, and Islamic character.",
+    "bottomStatement": "Knowledge. Faith. Character. Service.",
+    "bottomTagline": "These are not subjects we teach. They are values we live.",
+    "pillars": [
+      {
+        "label": "Scholarship",
+        "title": "Expert Ustaads",
+        "subtitle": "Trained For Excellence.",
+        "desc": "Our educators are qualified scholars who bring deep traditional understanding and academic rigor, ensuring proper guidance for every student.",
+        "metrics": [
+          { "value": "15+", "label": "Ustaads" },
+          { "value": "20+ Yrs", "label": "Avg Experience" },
+          { "value": "100%", "label": "Dedicated" }
+        ]
+      },
+      {
+        "label": "Accessibility",
+        "title": "Knowledge For Everyone",
+        "subtitle": "No Child Left Behind.",
+        "desc": "We believe sacred learning should be open to all. Thanks to generous community backing, we offer fully subsidized, free basic education.",
+        "metrics": [
+          { "value": "500+", "label": "Students" },
+          { "value": "Subsidized", "label": "Education" },
+          { "value": "Open", "label": "To All" }
+        ]
+      },
+      {
+        "label": "Learning",
+        "title": "Structured Path To Excellence",
+        "subtitle": "Milestones Of Growth.",
+        "desc": "Our curriculum leads students from basic alphabets and Tajweed to complete memorization and deep comprehension across key languages.",
+        "metrics": [
+          { "value": "Multiple", "label": "Programs" },
+          { "value": "4", "label": "Languages" },
+          { "value": "Daily", "label": "Classes" }
+        ]
+      },
+      {
+        "label": "Character",
+        "title": "Building Future Leaders",
+        "subtitle": "Values Over Subjects.",
+        "desc": "Education is incomplete without Adab (character). We nurture moral values, self-discipline, and community service in a safe environment.",
+        "metrics": [
+          { "value": "Adab First", "label": "Priority" },
+          { "value": "Safe", "label": "Campus" },
+          { "value": "Strong", "label": "Moral Values" }
+        ]
+      }
+    ]
+  },
+  "programs": {
+    "eyebrow": "Academic Pathways",
+    "title": "Our Spiritual Programs",
+    "desc": "Discover a program tailored for your child's spiritual and intellectual growth.",
+    "learnMore": "Learn Program Details",
+    "close": "Close Details",
+    "ageLabel": "Target Age",
+    "certLabel": "Credential",
+    "currLabel": "Core Subjects",
+    "hifz": {
+      "title": "Tahfeez-ul-Qur'an",
+      "desc": "A dedicated track for the complete memorization of the Holy Qur'an with rigorous emphasis on Tajweed rules and daily revision schedules.",
+      "duration": "Duration: 3-4 Years",
+      "age": "Age Group: 8-15 Years",
+      "cert": "Certification: Hafiz-ul-Qur'an",
+      "curriculum": "Curriculum: Memorization, Tajweed, basic Aqeedh, daily supplications (Duas)."
+    },
+    "alim": {
+      "title": "Alim Course",
+      "desc": "A comprehensive 6-year theology program covering advanced Arabic grammar, Hadith literature, Quranic exegesis (Tafseer), and jurisprudence (Fiqh).",
+      "duration": "Duration: 6 Years",
+      "age": "Age Group: 14+ Years",
+      "cert": "Certification: Alim-ul-Qur'an wa-Sunnah",
+      "curriculum": "Curriculum: Classical Arabic, Tafseer, Hadith, Usool-al-Fiqh, Islamic History."
+    },
+    "deenyat": {
+      "title": "Part-Time Deenyat",
+      "desc": "Evening classes designed for school-going children to acquire essential Islamic knowledge, moral values, and basic Quranic reading skills.",
+      "duration": "Duration: Ongoing",
+      "age": "Age Group: 6-16 Years",
+      "cert": "Certification: Deenyat Certificate",
+      "curriculum": "Curriculum: Noorani Qaida, Urdu reading, Islamic beliefs, Adab (Etiquette)."
+    }
+  },
+  "gallery": {
+    "eyebrow": "Visual Chronicles",
+    "title": "Glimpses of MMU",
+    "desc": "Explore moments of learning, devotion, and community life at Madrasa e Madeenatul Uloom.",
+    "all": "All Highlights",
+    "campus": "Campus & Architecture",
+    "academic": "Academic Life",
+    "spiritual": "Spiritual Gatherings",
+    "student": "Student Activities"
+  },
+  "admissions": {
+    "eyebrow": "Secure A Sacred Future",
+    "title": "Enrollment Guidelines",
+    "desc": "Begin your child's journey toward classical scholarship and character development.",
+    "step1": "1. Review Guidelines",
+    "step1Desc": "Please read our program requirements and academic expectations carefully before starting.",
+    "step2": "2. Submission",
+    "step2Desc": "Download and submit the offline application form to our admissions office.",
+    "step3": "3. Interview & Assessment",
+    "step3Desc": "Prospective students undergo a basic interview and reading assessment.",
+    "formTitle": "Request Admission Information",
+    "parentName": "Parent's Name",
+    "studentName": "Student's Name",
+    "phone": "Phone Number",
+    "programSelect": "Select Program",
+    "hifzOption": "Tahfeez-ul-Qur'an",
+    "alimOption": "Alim Course",
+    "deenyatOption": "Part-Time Deenyat",
+    "submitBtn": "Submit Request",
+    "successMsg": "Thank you! Your request has been sent. We will contact you soon."
+  },
+  "testimonials": {
+    "eyebrow": "Voice of the Ummah",
+    "title": "Nurturing Generations",
+    "desc": "Hear what parents and alumni say about their transformative experiences at MMU.",
+    "wisdomEyebrow": "Divine Wisdom",
+    "wisdomTitle": "Nurturing Minds With",
+    "wisdomTitleAccent": "Sacred Light",
+    "arabicVerse": "وَقُلْ رَبِّ زِدْنِي عِلْمًا",
+    "verseTranslation": "“And say: My Lord, increase me in knowledge.”",
+    "verseReference": "(Surah Taha 20:114)",
+    "statStudentsVal": "500+",
+    "statStudentsLabel": "Students Educated",
+    "statYearsVal": "15+",
+    "statYearsLabel": "Years of Service",
+    "statFocusVal": "Quran & Hadith",
+    "statFocusLabel": "Studies Focus",
+    "statReachVal": "Community",
+    "statReachLabel": "Focused Reach",
+    "testimonials": [
+      {
+        "quote": "\"The Alim course at MMU was not just academic; it transformed my character. The ustaads are true mentors who teach through practice.\"",
+        "author": "Alim Muhammad Yusuf",
+        "role": "Alumnus (Batch of 2021)"
+      },
+      {
+        "quote": "\"We are incredibly grateful to MMU. Our son memorized the entire Qur'an in three years. The care and attention he received were outstanding.\"",
+        "author": "Syed Abdul Rahman",
+        "role": "Parent of Hafiz Syed Bilal"
+      },
+      {
+        "quote": "\"The Deenyat classes provide my school-going children with the perfect balance of modern school education and spiritual values.\"",
+        "author": "Fatima Zohra",
+        "role": "Parent"
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Reach Out To Us",
+    "title": "Connect with MMU",
+    "desc": "Have questions? Our admissions and support team are here to guide you.",
+    "contactUs": "Contact Us",
+    "alwaysAssist": "We are always here to assist you",
+    "mmuName": "Madrasa e Madeenatul Uloom",
+    "address": "Ramanagara, Karnataka 562159",
+    "plusCodeLabel": "Plus Code",
+    "openMaps": "Open in Google Maps",
+    "getDirections": "Get Directions",
+    "phoneLabel": "Phone Number",
+    "whatsAppLabel": "WhatsApp",
+    "emailLabel": "Email Address",
+    "toBeUpdated": "[To Be Updated]",
+    "locationLabel": "Location",
+    "addressTitle": "Our Location",
+    "addressDesc": "📍 Ramanagara, Karnataka 562159\nIndia",
+    "phoneTitle": "Phone Numbers",
+    "phoneDesc": "📞 +91 98450 12345\n📞 +91 80 2727 6789",
+    "emailTitle": "Email Addresses",
+    "emailDesc": "✉️ info@madrasammu.in\n✉️ admissions@madrasammu.in",
+    "formTitle": "Send Us a Message",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "message": "Your Message",
+    "sendBtn": "Send Message",
+    "successMsg": "Your message has been sent successfully. We will get back to you shortly."
+  },
+  "footer": {
+    "tagline": "\"Where Knowledge Meets Taqwa\"",
+    "mmuTrust": "Operating under the distinguished M.M.U. Trust (Madras-E-Madinathul-Uloom Trust), founded by Shri Haji Syed Muneer.",
+    "quickLinks": "Quick Links",
+    "visitUs": "Visit Us",
+    "rights": "© 2025 Madrasa e Madeenatul Uloom | All Rights Reserved"
+  }
+}

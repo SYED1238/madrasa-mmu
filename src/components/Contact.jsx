@@ -1,13 +1,21 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Contact = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   return (
     <section id="contact" style={{ padding: '100px 5%', backgroundColor: 'var(--bg-card)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h2 className="font-playfair text-gold" style={{ fontSize: '42px', marginBottom: '10px' }}>Contact Us</h2>
-          <p style={{ color: 'var(--text-muted)' }}>We are always here to assist you</p>
+          <h2 className="font-playfair text-gold" style={{ fontSize: '42px', marginBottom: '10px', lineHeight: isUrdu ? '1.8' : '1.2' }}>
+            {t('contact.contactUs')}
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>
+            {t('contact.alwaysAssist')}
+          </p>
         </div>
 
         <div style={{
@@ -93,16 +101,16 @@ const Contact = () => {
               </svg>
             </div>
 
-            {/* Text Overlay */}
-            <div style={{ position: 'relative', zIndex: 2, padding: '0 20px', background: 'radial-gradient(ellipse at center, rgba(4,11,18,0.9) 0%, rgba(4,11,18,0) 80%)', paddingTop: '20px' }}>
-              <h3 className="font-playfair" style={{ color: 'var(--gold)', fontSize: '24px', marginBottom: '8px' }}>
-                Madrasa e Madeenatul Uloom
+             {/* Text Overlay */}
+            <div style={{ position: 'relative', zIndex: 2, padding: '0 20px', background: 'radial-gradient(ellipse at center, rgba(4,11,18,0.9) 0%, rgba(4,11,18,0) 80%)', paddingTop: '20px' }} className={isUrdu ? 'ur-text' : ''}>
+              <h3 className="font-playfair" style={{ color: 'var(--gold)', fontSize: '24px', marginBottom: '8px', lineHeight: isUrdu ? '1.8' : '1.2' }}>
+                {t('contact.mmuName')}
               </h3>
               <p style={{ color: 'var(--text-primary)', fontSize: '15px', marginBottom: '4px' }}>
-                Ramanagara, Karnataka 562159
+                {t('contact.address')}
               </p>
               <p style={{ color: 'var(--text-muted)', fontSize: '13px', letterSpacing: '1px', marginBottom: '25px' }}>
-                Plus Code: P78H+XXV
+                {t('contact.plusCodeLabel')}: P78H+XXV
               </p>
 
               <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
@@ -120,7 +128,8 @@ const Contact = () => {
                     fontWeight: '600',
                     cursor: 'none',
                     transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 15px rgba(201,168,76,0.3)'
+                    boxShadow: '0 4px 15px rgba(201,168,76,0.3)',
+                    lineHeight: isUrdu ? '1.8' : '1.2'
                   }}
                   onMouseOver={(e) => {
                     e.target.style.background = 'var(--gold-light)';
@@ -131,7 +140,7 @@ const Contact = () => {
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  Open in Google Maps
+                  {t('contact.openMaps')}
                 </a>
                 <a 
                   href="https://www.google.com/maps/dir/?api=1&destination=P78H%2BXXV+Ramanagara" 
@@ -147,7 +156,8 @@ const Contact = () => {
                     fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'none',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    lineHeight: isUrdu ? '1.8' : '1.2'
                   }}
                   onMouseOver={(e) => {
                     e.target.style.background = 'rgba(201,168,76,0.1)';
@@ -158,7 +168,7 @@ const Contact = () => {
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  Get Directions
+                  {t('contact.getDirections')}
                 </a>
               </div>
             </div>
@@ -180,9 +190,9 @@ const Contact = () => {
                 fontSize: '24px',
                 flexShrink: 0
               }}>📍</div>
-              <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>Location</h4>
-                <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>Ramanagara, Karnataka 562159</p>
+              <div className={isUrdu ? 'ur-text' : ''}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>{t('contact.locationLabel')}</h4>
+                <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>{t('contact.address')}</p>
               </div>
             </div>
 
@@ -198,9 +208,9 @@ const Contact = () => {
                 fontSize: '24px',
                 flexShrink: 0
               }}>📞</div>
-              <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>Phone Number</h4>
-                <p style={{ color: 'var(--text-muted)' }}>[To Be Updated]</p>
+              <div className={isUrdu ? 'ur-text' : ''}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>{t('contact.phoneLabel')}</h4>
+                <p style={{ color: 'var(--text-muted)' }}>{t('contact.toBeUpdated')}</p>
               </div>
             </div>
 
@@ -216,9 +226,9 @@ const Contact = () => {
                 fontSize: '24px',
                 flexShrink: 0
               }}>💬</div>
-              <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>WhatsApp</h4>
-                <p style={{ color: 'var(--text-muted)' }}>[To Be Updated]</p>
+              <div className={isUrdu ? 'ur-text' : ''}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>{t('contact.whatsAppLabel')}</h4>
+                <p style={{ color: 'var(--text-muted)' }}>{t('contact.toBeUpdated')}</p>
               </div>
             </div>
 
@@ -234,9 +244,9 @@ const Contact = () => {
                 fontSize: '24px',
                 flexShrink: 0
               }}>📧</div>
-              <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>Email Address</h4>
-                <p style={{ color: 'var(--text-muted)' }}>[To Be Updated]</p>
+              <div className={isUrdu ? 'ur-text' : ''}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>{t('contact.emailLabel')}</h4>
+                <p style={{ color: 'var(--text-muted)' }}>{t('contact.toBeUpdated')}</p>
               </div>
             </div>
 
@@ -252,8 +262,8 @@ const Contact = () => {
                 fontSize: '24px',
                 flexShrink: 0
               }}>🗺️</div>
-              <div>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>Plus Code</h4>
+              <div className={isUrdu ? 'ur-text' : ''}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '5px' }}>{t('contact.plusCodeLabel')}</h4>
                 <p style={{ color: 'var(--text-muted)' }}>P78H+XXV</p>
               </div>
             </div>

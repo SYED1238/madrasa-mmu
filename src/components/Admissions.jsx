@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const StatCounter = ({ value, label, suffix = "" }) => {
   const [count, setCount] = useState(0);
@@ -42,6 +43,8 @@ const StatCounter = ({ value, label, suffix = "" }) => {
 };
 
 const FloatingInput = ({ type = "text", label, value, onChange, id }) => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
   const [isFocused, setIsFocused] = useState(false);
   const hasValue = value && value.toString().length > 0;
 
@@ -51,13 +54,14 @@ const FloatingInput = ({ type = "text", label, value, onChange, id }) => {
         htmlFor={id}
         style={{
           position: 'absolute',
-          left: '15px',
+          left: isUrdu ? 'auto' : '15px',
+          right: isUrdu ? '15px' : 'auto',
           top: '0',
           color: isFocused || hasValue ? '#c9a84c' : '#8a8070',
           pointerEvents: 'none',
-          fontFamily: 'Inter',
+          fontFamily: isUrdu ? 'Noto Nastaliq Urdu' : 'Inter',
           fontSize: isFocused || hasValue ? '11px' : '15px',
-          transform: isFocused || hasValue ? 'translateY(-8px)' : 'translateY(15px)',
+          transform: isFocused || hasValue ? (isUrdu ? 'translateY(-12px)' : 'translateY(-8px)') : 'translateY(15px)',
           transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
           background: isFocused || hasValue ? '#12121f' : 'transparent',
           padding: isFocused || hasValue ? '0 6px' : '0',
@@ -86,7 +90,9 @@ const FloatingInput = ({ type = "text", label, value, onChange, id }) => {
           transition: 'all 0.3s ease',
           boxShadow: isFocused ? '0 0 15px rgba(201, 168, 76, 0.12)' : 'none',
           position: 'relative',
-          zIndex: 1
+          zIndex: 1,
+          textAlign: isUrdu ? 'right' : 'left',
+          direction: isUrdu ? 'rtl' : 'ltr'
         }}
       />
       
@@ -110,6 +116,9 @@ const FloatingInput = ({ type = "text", label, value, onChange, id }) => {
 };
 
 const Admissions = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const [parentName, setParentName] = useState('');
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState('');
@@ -147,7 +156,13 @@ const Admissions = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const timelineSteps = [
+  const timelineSteps = isUrdu ? [
+    { step: "مرحلہ 1", title: "درخواست جمع کروائیں", desc: "ہمارے آن لائن فارم کے ذریعے معلومات حاصل کریں یا براہِ راست واٹس ایپ پر رابطہ کریں۔" },
+    { step: "مرحلہ 2", title: "طالب علم کا جائزہ", desc: "بچے کے تلفظ، تجوید اور تعلیمی معیار کے فہم کے لیے ایک تعلیمی جائزہ نشست۔" },
+    { step: "مرحلہ 3", title: "سرپرست سے گفتگو", desc: "تعلیمی توقعات، تدریسی نصاب اور تعلیمی نظام کے متعلق مختصر نشست۔" },
+    { step: "مرحلہ 4", title: "داخلے کی تصدیق", desc: "ضروری دستاویزات (شناختی کارڈ/برتھ سرٹیفکیٹ) جمع کروائیں اور سیٹ مخصوص کریں۔" },
+    { step: "مرحلہ 5", title: "تعلیم کا آغاز", desc: "طالب علم کا باقاعدہ داخلہ کر کے اسے متعلقہ استاد کے حوالے کیا جاتا ہے (مکمل طور پر مفت)۔" }
+  ] : [
     { step: "Step 1", title: "Submit Enquiry", desc: "Fill out our luxury online form or tap directly to discuss on WhatsApp with our enrollment desk." },
     { step: "Step 2", title: "Student Assessment", desc: "A soft, supportive evaluation session to determine the student's baseline Tajweed and learning level." },
     { step: "Step 3", title: "Parent Interaction", desc: "A brief conversation discussing expectations, the curriculum, and onboarding into the MMU family." },
@@ -157,8 +172,7 @@ const Admissions = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate submission
-    alert(`Enquiry Submitted Successfully!\nParent: ${parentName}\nChild: ${childName}`);
+    alert(isUrdu ? `درخواست کامیابی سے جمع ہو گئی!\nسرپرست: ${parentName}\nطالب علم: ${childName}` : `Enquiry Submitted Successfully!\nParent: ${parentName}\nChild: ${childName}`);
     setParentName('');
     setChildName('');
     setChildAge('');
@@ -487,26 +501,32 @@ const Admissions = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '18px' }}>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
             <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase' }}>
-              Admissions Open
+              {isUrdu ? "داخلے جاری ہیں" : "Admissions Open"}
             </span>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
           </div>
 
-          <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
-            Begin A Journey<br/>Of <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Faith & Knowledge</span>
-          </h2>
+          {isUrdu ? (
+            <h2 className="font-playfair ur-text" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.4' }}>
+              علم اور ایمان کے مقدس<br/>سفر کا <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>آغاز کریں</span>
+            </h2>
+          ) : (
+            <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
+              Begin A Journey<br/>Of <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Faith & Knowledge</span>
+            </h2>
+          )}
           
-          <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '680px', margin: '0 auto', lineHeight: '1.7', fontStyle: 'italic', padding: '0 15px' }}>
-            "Join generations of students who have grown through rigorous Quranic studies, character development, and noble community values."
+          <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '680px', margin: '0 auto', lineHeight: '1.7', fontStyle: 'italic', padding: '0 15px' }}>
+            {t('admissions.desc')}
           </p>
         </div>
 
         {/* Floating Trust Banner */}
         <div className="admissions-stats-bar">
-          <StatCounter value="500" suffix="+" label="Students Educated" />
-          <StatCounter value="15" suffix="+" label="Years of Service" />
-          <StatCounter value="25000" suffix="+" label="Hours of Learning" />
-          <StatCounter value="12000" suffix="+" label="Community Impact" />
+          <StatCounter value="500" suffix="+" label={t('about.metrics.students')} />
+          <StatCounter value="15" suffix="+" label={t('about.metrics.years')} />
+          <StatCounter value="25000" suffix="+" label={isUrdu ? "تعلیمی اوقات" : "Hours of Learning"} />
+          <StatCounter value="12000" suffix="+" label={isUrdu ? "کمیونٹی پر اثر" : "Community Impact"} />
         </div>
 
         {/* Core Layout Split */}
@@ -519,8 +539,8 @@ const Admissions = () => {
             animate={isTimelineInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <h3 className="font-playfair text-gold" style={{ fontSize: '26px', fontWeight: '400', marginBottom: '35px', paddingLeft: '15px' }}>
-              Your Path To Enrollment
+            <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '26px', fontWeight: '400', marginBottom: '35px', paddingLeft: '15px' }}>
+              {isUrdu ? "داخلے کا طریقہ کار" : "Your Path To Enrollment"}
             </h3>
 
             <div className="enroll-timeline-container">
@@ -530,14 +550,14 @@ const Admissions = () => {
                 <div key={idx} className="enroll-timeline-item">
                   <div className="enroll-timeline-diamond" />
                   
-                  <div className="enroll-timeline-card">
+                  <div className="enroll-timeline-card" style={{ textAlign: isUrdu ? 'right' : 'left' }}>
                     <span style={{ color: '#c9a84c', fontSize: '11px', letterSpacing: '2px', fontWeight: '600', textTransform: 'uppercase' }}>
                       {step.step}
                     </span>
-                    <h4 className="font-playfair" style={{ fontSize: '19px', color: '#ffffff', marginTop: '4px', marginBottom: '8px', fontWeight: 'normal' }}>
+                    <h4 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '19px', color: '#ffffff', marginTop: '4px', marginBottom: '8px', fontWeight: 'normal' }}>
                       {step.title}
                     </h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                    <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
                       {step.desc}
                     </p>
                   </div>
@@ -576,10 +596,11 @@ const Admissions = () => {
                   zIndex: 3,
                   display: 'flex',
                   alignItems: 'flex-end',
-                  padding: '20px'
+                  padding: '20px',
+                  justifyContent: isUrdu ? 'flex-end' : 'flex-start'
                 }}>
-                  <p style={{ color: 'var(--text-primary)', fontFamily: '"Cormorant Garamond", serif', fontSize: '18px', margin: 0, letterSpacing: '1px' }}>
-                    ✦ Cultivating future leaders in Ramanagara ✦
+                  <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-primary)', fontFamily: '"Cormorant Garamond", serif', fontSize: '18px', margin: 0, letterSpacing: '1px' }}>
+                    {isUrdu ? "✦ رام نگر میں مستقبل کے رہبروں کی تربیت ✦" : "✦ Cultivating future leaders in Ramanagara ✦"}
                   </p>
                 </div>
               </div>
@@ -599,35 +620,35 @@ const Admissions = () => {
               transition: 'transform 0.1s ease-out'
             }}
           >
-            <div style={{ position: 'relative', zIndex: 5 }}>
+            <div style={{ position: 'relative', zIndex: 5, textAlign: isUrdu ? 'right' : 'left' }}>
               
-              <h3 className="font-playfair text-gold" style={{ fontSize: '28px', marginBottom: '8px', fontWeight: 'normal' }}>
-                Enquire Now
+              <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '28px', marginBottom: '8px', fontWeight: 'normal' }}>
+                {t('admissions.formTitle')}
               </h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '35px', lineHeight: '1.6' }}>
-                Begin your child's enrollment application. Provide your details below to register an inquiry, or initiate a direct chat.
+              <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '35px', lineHeight: '1.6' }}>
+                {isUrdu ? "اپنے بچے کے داخلے کی معلومات حاصل کرنے کے لیے درج ذیل فارم پُر کریں یا واٹس ایپ پر براہِ راست رابطہ کریں۔" : "Begin your child's enrollment application. Provide your details below to register an inquiry, or initiate a direct chat."}
               </p>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <FloatingInput 
                   id="parentName" 
-                  label="Parent's Full Name" 
+                  label={t('admissions.parentName')} 
                   value={parentName} 
                   onChange={(e) => setParentName(e.target.value)} 
                 />
                 
                 <FloatingInput 
                   id="childName" 
-                  label="Child's Full Name" 
+                  label={t('admissions.studentName')} 
                   value={childName} 
                   onChange={(e) => setChildName(e.target.value)} 
                 />
 
-                <div style={{ display: 'flex', gap: '20px', width: '100%', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '20px', width: '100%', flexWrap: 'wrap', flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
                   <div style={{ flex: '1 1 120px' }}>
                     <FloatingInput 
                       id="childAge" 
-                      label="Child's Age" 
+                      label={isUrdu ? "طالب علم کی عمر" : "Child's Age"} 
                       value={childAge} 
                       onChange={(e) => setChildAge(e.target.value)} 
                     />
@@ -635,7 +656,7 @@ const Admissions = () => {
                   <div style={{ flex: '1 1 180px' }}>
                     <FloatingInput 
                       id="phoneNumber" 
-                      label="Phone Number" 
+                      label={t('admissions.phone')} 
                       value={phoneNumber} 
                       onChange={(e) => setPhoneNumber(e.target.value)} 
                     />
@@ -669,7 +690,7 @@ const Admissions = () => {
                       e.target.style.boxShadow = '0 4px 20px rgba(201, 168, 76, 0.2)';
                     }}
                   >
-                    Submit Enrollment Enquiry
+                    {t('admissions.submitBtn')}
                   </button>
 
                   {/* Pulsing WhatsApp CTA */}
@@ -694,7 +715,8 @@ const Admissions = () => {
                       cursor: 'none',
                       transition: 'all 0.4s ease',
                       boxShadow: '0 4px 20px rgba(37, 211, 102, 0.25)',
-                      position: 'relative'
+                      position: 'relative',
+                      flexDirection: isUrdu ? 'row-reverse' : 'row'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -718,23 +740,27 @@ const Admissions = () => {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                     </svg>
-                    Speak To Admissions Team
+                    {isUrdu ? "داخلہ ٹیم سے بات کریں" : "Speak To Admissions Team"}
                   </a>
                 </div>
 
                 {/* Trust Elements Badges */}
-                <div className="badge-grid">
-                  <div className="trust-badge-item">
-                    <span style={{ color: '#c9a84c' }}>✦</span> Open To All Children
+                <div className="badge-grid" style={{ direction: isUrdu ? 'rtl' : 'ltr' }}>
+                  <div className="trust-badge-item" style={{ flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
+                    <span style={{ color: '#c9a84c' }}>✦</span>
+                    <span className={isUrdu ? "ur-text" : ""}>{isUrdu ? "تمام بچوں کے لیے کھلے داخلے" : "Open To All Children"}</span>
                   </div>
-                  <div className="trust-badge-item">
-                    <span style={{ color: '#2d9b7f' }}>✦</span> Subsidized Education
+                  <div className="trust-badge-item" style={{ flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
+                    <span style={{ color: '#2d9b7f' }}>✦</span>
+                    <span className={isUrdu ? "ur-text" : ""}>{isUrdu ? "مفت و رہائشی تعلیم" : "Subsidized Education"}</span>
                   </div>
-                  <div className="trust-badge-item">
-                    <span style={{ color: '#8b5cf6' }}>✦</span> Parent Guidance
+                  <div className="trust-badge-item" style={{ flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
+                    <span style={{ color: '#8b5cf6' }}>✦</span>
+                    <span className={isUrdu ? "ur-text" : ""}>{isUrdu ? "والدین کی رہنمائی" : "Parent Guidance"}</span>
                   </div>
-                  <div className="trust-badge-item">
-                    <span style={{ color: '#e8845a' }}>✦</span> Safe Environment
+                  <div className="trust-badge-item" style={{ flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
+                    <span style={{ color: '#e8845a' }}>✦</span>
+                    <span className={isUrdu ? "ur-text" : ""}>{isUrdu ? "محفوظ اور پرسکون کیمپس" : "Safe Environment"}</span>
                   </div>
                 </div>
 
@@ -755,7 +781,7 @@ const Admissions = () => {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}
               >
                 <span 
-                  className="font-playfair text-gold" 
+                  className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} 
                   style={{ 
                     fontSize: 'clamp(22px, 3.5vw, 36px)', 
                     fontWeight: '300', 
@@ -764,7 +790,7 @@ const Admissions = () => {
                     fontStyle: 'italic'
                   }}
                 >
-                  "Knowledge Is The Greatest Investment A Parent Can Make."
+                  {isUrdu ? "دینی تعلیم وہ بہترین سرمایہ کاری ہے جو والدین اپنی اولاد کے لیے کر سکتے ہیں۔" : "\"Knowledge Is The Greatest Investment A Parent Can Make.\""}
                 </span>
                 
                 {/* Luxury gold divider */}

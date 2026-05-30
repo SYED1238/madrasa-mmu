@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-scroll';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 /* ─────────────────────────────────────────────
    ANIMATED COUNTER — for the Trust Bar
@@ -84,8 +86,23 @@ const FloatingParticles = () => {
    HERO — Iceland-style editorial composition
 ═════════════════════════════════════════════ */
 const Hero = () => {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
+  const isUrdu = currentLanguage === 'ur';
+
   const heroRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile vs desktop viewports
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   /* ── Parallax scroll ── */
   const { scrollYProgress } = useScroll({
@@ -112,11 +129,11 @@ const Hero = () => {
   }, [handleMouseMove]);
 
   /* ── Centerpiece phrase cycling ── */
-  const phrases = ['Seeking Knowledge', 'Strengthening Faith', 'Serving Humanity'];
+  const phrases = [t('hero.motto.seeking'), t('hero.motto.strengthening'), t('hero.motto.serving')];
   const [phraseIdx, setPhraseIdx] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setPhraseIdx((p) => (p + 1) % phrases.length), 3200);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setPhraseIdx((p) => (p + 1) % phrases.length), 3200);
+    return () => clearInterval(timer);
   }, [phrases.length]);
 
   return (
@@ -197,7 +214,7 @@ const Hero = () => {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 60px;
+            padding: 90px 60px 0;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -210,7 +227,8 @@ const Hero = () => {
             display: inline-flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 28px;
+            margin-top: 52px;
+            margin-bottom: 12px;
           }
           .hero-eyebrow-line {
             width: 36px;
@@ -631,7 +649,7 @@ const Hero = () => {
           /* ═══════ RESPONSIVE ═══════ */
           @media (max-width: 1024px) {
             .hero-fg {
-              padding: 0 40px;
+              padding: 90px 40px 0;
             }
             .hero-brand-line-1 {
               font-size: clamp(44px, 7vw, 95px) !important;
@@ -759,17 +777,6 @@ const Hero = () => {
         {/* ═══ FOREGROUND CONTENT ═══ */}
         <motion.div className="hero-fg" style={{ y: foregroundY }}>
 
-          {/* Eyebrow */}
-          <motion.div
-            className="hero-eyebrow"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <div className="hero-eyebrow-line" />
-            <span>Est. Ramanagara, Karnataka</span>
-          </motion.div>
-
           {/* Brand name — dominant */}
           <motion.h1
             className="hero-brand"
@@ -794,7 +801,7 @@ const Hero = () => {
               }}
               transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
             >
-              Madrasa <span className="hero-brand-e">e</span>
+              {t('hero.titleLine1')} {!isUrdu && <span className="hero-brand-e">e</span>}
             </motion.span>
             <motion.span
               className="hero-brand-line hero-brand-line-2"
@@ -804,7 +811,7 @@ const Hero = () => {
               }}
               transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
             >
-              Madeenatul
+              {t('hero.titleLine2')}
             </motion.span>
             <motion.span
               className="hero-brand-line hero-brand-line-3"
@@ -814,9 +821,21 @@ const Hero = () => {
               }}
               transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
             >
-              Uloom
+              {t('hero.titleLine3')}
             </motion.span>
           </motion.h1>
+
+          {/* Eyebrow */}
+          <motion.div
+            className="hero-eyebrow"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            style={{ marginTop: '28px', marginBottom: '12px' }}
+          >
+            <div className="hero-eyebrow-line" />
+            <span style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{t('hero.est')}</span>
+          </motion.div>
 
           {/* Divider */}
           <motion.div
@@ -824,6 +843,7 @@ const Hero = () => {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 80, opacity: 1 }}
             transition={{ duration: 1, delay: 1.5 }}
+            style={{ marginTop: '16px', marginBottom: '24px' }}
           />
 
           {/* Secondary headline */}
@@ -832,18 +852,22 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.7 }}
-          >
-            Where Faith <em>Meets</em> Knowledge
-          </motion.h2>
+            style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}
+            dangerouslySetInnerHTML={{ __html: t('hero.tagline') }}
+          />
 
           {/* Supporting text */}
           <motion.p
-            className="hero-support"
+            className="hero-support ur-text"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.9 }}
+            style={{ 
+              fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined,
+              textAlign: isUrdu ? 'right' : 'left'
+            }}
           >
-            A prestigious Islamic institution nurturing scholars, character, and faith in the heart of Ramanagara.
+            {t('hero.description')}
           </motion.p>
 
           {/* CTAs */}
@@ -852,17 +876,20 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 2.1 }}
+            style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}
           >
             <Link to="admissions" smooth={true} offset={-70} duration={500}>
               <button className="hero-btn-gold" id="hero-enroll-btn">
-                Enroll Your Child
+                {t('hero.enrollBtn')}
               </button>
             </Link>
             <Link to="programs" smooth={true} offset={-70} duration={500}>
               <button className="hero-btn-ghost" id="hero-programs-btn">
-                Explore Programs
+                {t('hero.programsBtn')}
               </button>
             </Link>
+            {/* Premium Language Switcher beside CTA buttons */}
+            <LanguageSwitcher style={{ margin: isMobile ? '10px auto 0 auto' : '0 0 0 15px' }} />
           </motion.div>
         </motion.div>
 
@@ -894,7 +921,7 @@ const Hero = () => {
               transition={{ duration: 0.6, ease: 'easeInOut' }}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
             >
-              <span className="hero-motto-word">{phrases[phraseIdx]}</span>
+              <span className="hero-motto-word" style={{ fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>{phrases[phraseIdx]}</span>
               <span className="hero-motto-accent" />
             </motion.div>
           </AnimatePresence>
@@ -910,10 +937,10 @@ const Hero = () => {
       {/* ═══ TRUST BAR ═══ */}
       <section className="hero-trust-bar" id="trust-bar">
         <div className="hero-trust-inner">
-          <AnimatedCounter end={500}   suffix="+" label="Students"       delay={0} />
-          <AnimatedCounter end={15}    suffix="+" label="Years"          delay={200} />
-          <AnimatedCounter end={25000} suffix="+" label="Learning Hours" delay={400} />
-          <AnimatedCounter end={100}   suffix="%" label="MMU Trust"      delay={600} />
+          <AnimatedCounter end={500}   suffix="+" label={t('stats.studentsLabel')}       delay={0} />
+          <AnimatedCounter end={15}    suffix="+" label={t('stats.yearsLabel')}          delay={200} />
+          <AnimatedCounter end={25000} suffix="+" label={t('stats.hoursLabel')} delay={400} />
+          <AnimatedCounter end={100}   suffix="%" label={t('stats.trustLabel')}      delay={600} />
         </div>
       </section>
     </>

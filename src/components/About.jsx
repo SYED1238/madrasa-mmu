@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const CounterUp = ({ value, label, suffix = "" }) => {
   const [count, setCount] = useState(0);
@@ -54,6 +55,8 @@ const CounterUp = ({ value, label, suffix = "" }) => {
 
 // Illuminated Islamic Manuscript Modal Component
 const ManuscriptModal = ({ index, onClose, referenceData }) => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
   const [activeTab, setActiveTab] = useState('quran'); // 'quran' | 'hadith' | 'reflection'
   const data = referenceData[index];
 
@@ -64,6 +67,13 @@ const ManuscriptModal = ({ index, onClose, referenceData }) => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
+  const getTabLabel = (tab) => {
+    if (tab === 'quran') return t('about.modal.tabQuran');
+    if (tab === 'hadith') return t('about.modal.tabHadith');
+    if (tab === 'reflection') return t('about.modal.tabReflection');
+    return tab;
+  };
 
   return (
     <motion.div
@@ -94,8 +104,8 @@ const ManuscriptModal = ({ index, onClose, referenceData }) => {
 
         {/* Modal Header */}
         <div className="manuscript-header">
-          <span className="manuscript-pillar-num">Pillar {data.num}</span>
-          <h2 className="font-playfair manuscript-title">{data.name}</h2>
+          <span className="manuscript-pillar-num">{t('about.modal.pillar')} {data.num}</span>
+          <h2 className={`font-playfair manuscript-title ${isUrdu ? "ur-text" : ""}`}>{data.name}</h2>
           <div className="manuscript-calligraphy-icon">{data.arabicName}</div>
         </div>
 
@@ -107,7 +117,7 @@ const ManuscriptModal = ({ index, onClose, referenceData }) => {
               onClick={() => setActiveTab(tab)}
               className={`manuscript-tab-btn ${activeTab === tab ? 'active' : ''}`}
             >
-              {tab}
+              {getTabLabel(tab)}
             </button>
           ))}
         </div>
@@ -126,25 +136,25 @@ const ManuscriptModal = ({ index, onClose, referenceData }) => {
               {activeTab === 'quran' && (
                 <div>
                   <div className="manuscript-arabic-verse font-amiri">{data.quran.arabic}</div>
-                  <div className="manuscript-translation">"{data.quran.translation}"</div>
+                  <div className={`manuscript-translation ${isUrdu ? "ur-text" : ""}`}>"{data.quran.translation}"</div>
                   <div className="manuscript-citation">{data.quran.citation}</div>
-                  <p className="manuscript-explanation">{data.quran.explanation}</p>
+                  <p className={`manuscript-explanation ${isUrdu ? "ur-text" : ""}`}>{data.quran.explanation}</p>
                 </div>
               )}
 
               {activeTab === 'hadith' && (
                 <div>
                   <div className="manuscript-arabic-verse font-amiri">{data.hadith.arabic}</div>
-                  <div className="manuscript-translation">"{data.hadith.translation}"</div>
+                  <div className={`manuscript-translation ${isUrdu ? "ur-text" : ""}`}>"{data.hadith.translation}"</div>
                   <div className="manuscript-citation">{data.hadith.citation}</div>
-                  <p className="manuscript-explanation">{data.hadith.explanation}</p>
+                  <p className={`manuscript-explanation ${isUrdu ? "ur-text" : ""}`}>{data.hadith.explanation}</p>
                 </div>
               )}
 
               {activeTab === 'reflection' && (
                 <div>
-                  <div className="manuscript-reflection-heading">MMU Spiritual Integration</div>
-                  <p className="manuscript-reflection-text">{data.reflection.text}</p>
+                  <div className={`manuscript-reflection-heading ${isUrdu ? "ur-text" : ""}`}>{t('about.modal.reflectionHeading')}</div>
+                  <p className={`manuscript-reflection-text ${isUrdu ? "ur-text" : ""}`}>{data.reflection.text}</p>
                 </div>
               )}
             </motion.div>
@@ -162,6 +172,9 @@ const ManuscriptModal = ({ index, onClose, referenceData }) => {
 };
 
 const About = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const containerRef = useRef(null);
   const titleRef = useRef(null);
   const bottomRef = useRef(null);
@@ -182,70 +195,63 @@ const About = () => {
 
   const [activeModal, setActiveModal] = useState(null);
 
+  const translatedRefData = t('about.referenceData', { returnObjects: true }) || [];
   const referenceData = [
     {
       num: "01",
-      name: "Ilm (Knowledge)",
       arabicName: "العلم",
       quran: {
         arabic: "قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ",
-        translation: "Say, 'Are those who know equal to those who do not know?'",
-        citation: "Surah Az-Zumar 39:9",
-        explanation: "Knowledge elevates a believer. The Quran repeatedly emphasizes that those endowed with knowledge possess a deeper understanding of reality, spiritual direction, and a higher standing before Allah."
+        ...(translatedRefData[0]?.quran || {})
       },
       hadith: {
-        arabic: "طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ",
-        translation: "Seeking knowledge is an obligation upon every Muslim.",
-        citation: "Sunan Ibn Majah",
-        explanation: "Acquiring knowledge is not a luxury or optional pursuit in Islam; it is an active spiritual duty binding on every individual, regardless of gender or social status."
+        arabic: "طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى کُلِّ مُسْلِمٍ",
+        ...(translatedRefData[0]?.hadith || {})
       },
-      reflection: {
-        text: "Knowledge (Ilm) is the foundation of action. Without understanding, worship lacks depth and character lacks direction. At MMU, we make high-quality Islamic learning accessible to everyone through professional scholars."
-      }
+      reflection: translatedRefData[0]?.reflection || {},
+      name: translatedRefData[0]?.name || "Ilm"
     },
     {
       num: "02",
-      name: "Imaan (Faith)",
       arabicName: "الإيمان",
       quran: {
-        arabic: "إِنَّمَا الْمُؤْمِنُونَ الَّذِينَ إِذَا ذُكِرَ اللَّهُ وَجِلَتْ قُلُوبُهُمْ",
-        translation: "The believers are only those who, when Allah is mentioned, their hearts become fearful.",
-        citation: "Surah Al-Anfal 8:2",
-        explanation: "True faith (Imaan) is not merely a verbal statement; it is a profound emotional state that softens the heart, creating awe and reverence whenever Allah is remembered."
+        arabic: "إِنَّمَا الْمُؤْمِنُونَ الَّذِينَ إِذَا ذُکِرَ اللَّهُ وَجِلَتْ قُلُوبُهُمْ",
+        ...(translatedRefData[1]?.quran || {})
       },
       hadith: {
         arabic: "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
-        translation: "None of you truly believes until he loves for his brother what he loves for himself.",
-        citation: "Sahih Al-Bukhari & Sahih Muslim",
-        explanation: "Genuine faith is inextricably linked to how we treat others. Seeking success, safety, and guidance for our fellow brothers and sisters is a core parameter of Imaan."
+        ...(translatedRefData[1]?.hadith || {})
       },
-      reflection: {
-        text: "Faith (Imaan) is a seed that must be watered with action and community service. We foster a supportive environment where students cultivate deep personal connection with their Creator and display empathy for humanity."
-      }
+      reflection: translatedRefData[1]?.reflection || {},
+      name: translatedRefData[1]?.name || "Imaan"
     },
     {
       num: "03",
-      name: "Ikhlaas (Sincerity)",
       arabicName: "الإخلاص",
       quran: {
         arabic: "وَمَا أُمِرُوا إِلَّا لِيَعْبُدُوا اللَّهَ مُخْلِصِينَ لَهُ الدِّينَ",
-        translation: "And they were not commanded except to worship Allah, being sincere to Him in religion.",
-        citation: "Surah Al-Bayyinah 98:5",
-        explanation: "Every act of worship must be directed solely to Allah. Sincerity (Ikhlaas) is the spiritual filter that ensures our religious deeds are accepted and free from ostentation."
+        ...(translatedRefData[2]?.quran || {})
       },
       hadith: {
         arabic: "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ",
-        translation: "Actions are judged by intentions.",
-        citation: "Sahih Al-Bukhari",
-        explanation: "The value of any deed lies in the underlying intention. A simple worldly action performed with a pure intention can earn immense reward, while a spiritual deed done for show has no value."
+        ...(translatedRefData[2]?.hadith || {})
       },
-      reflection: {
-        text: "Sincerity (Ikhlaas) is the soul of our actions. We teach our students to continuously audit their intentions, seeking only the pleasure of Allah in their learning, teaching, and serving journeys."
-      }
+      reflection: translatedRefData[2]?.reflection || {},
+      name: translatedRefData[2]?.name || "Ikhlaas"
     }
   ];
 
-  const titleWords = [
+  const titleWords = isUrdu ? [
+    { text: "صرف", gold: false },
+    { text: "ایک", gold: false },
+    { text: "مدرسہ", gold: true, italic: true },
+    { text: "نہیں۔", gold: false },
+    { text: "علم", gold: true },
+    { text: "کا", gold: false },
+    { text: "ایک", gold: false },
+    { text: "عظیم", gold: false },
+    { text: "ورثہ۔", gold: true }
+  ] : [
     { text: "More", gold: false },
     { text: "Than", gold: false },
     { text: "A", gold: false },
@@ -822,7 +828,7 @@ const About = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
             <span style={{ color: '#c9a84c', fontSize: '13px', letterSpacing: '5px', fontWeight: '600', textTransform: 'uppercase' }}>
-              Our Legacy
+              {t('about.eyebrow')}
             </span>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
           </div>
@@ -858,6 +864,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
+          className={isUrdu ? "ur-text" : ""}
           style={{
             maxWidth: '780px',
             margin: '0 auto 60px auto',
@@ -869,7 +876,7 @@ const About = () => {
             padding: '0 15px'
           }}
         >
-          "For years, Madrasa-e-Madeenatul Uloom has served as a sanctuary of Quranic scholarship, Islamic values, character development, and selfless community empowerment in Ramanagara."
+          {t('about.subtitle')}
         </motion.p>
 
         {/* Split Section: Timeline & Centerpiece visual */}
@@ -877,8 +884,8 @@ const About = () => {
           
           {/* Left Column: Timeline */}
           <div style={{ position: 'relative', paddingLeft: '15px' }}>
-            <h3 className="font-playfair text-gold" style={{ fontSize: '28px', fontWeight: '400', marginBottom: '35px', paddingLeft: '15px' }}>
-              Spiritual Milestones
+            <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '28px', fontWeight: '400', marginBottom: '35px', paddingLeft: '15px' }}>
+              {t('about.milestonesTitle')}
             </h3>
 
             <div className="timeline-container-custom">
@@ -886,13 +893,7 @@ const About = () => {
               <div className="timeline-line-custom" />
 
               {/* Timeline Items */}
-              {[
-                { year: '2007', title: 'Foundation of MMU Trust', desc: 'Founded under the noble guidance of Shri Haji Syed Muneer to build a strong educational foundation and welfare network in Ramanagara.' },
-                { year: '2009', title: 'Beginning of Quranic Education', desc: 'Commenced dedicated Nazira and Hifz classes, introducing a rigorous curriculum of Tajweed (pronunciation) and spiritual refinement.' },
-                { year: '2014', title: 'Hundreds of Students Educated', desc: 'Expanded capacity to host hundreds of children. Our doors remain open to all students, offering education, lodging, and books entirely free.' },
-                { year: '2020', title: 'Community Development Initiatives', desc: 'Launched extensive community outreach drives, distributing food packets, support resources, and hosting civic engagement programs.' },
-                { year: 'Present & Future', title: 'Modern Digital Integration', desc: 'Incorporating modern computer literacy programs and digital tools alongside our traditional curriculum, preparing scholars for contemporary leadership.' }
-              ].map((item, idx) => (
+              {(t('about.milestones', { returnObjects: true }) || []).map((item, idx) => (
                 <div key={idx} className="timeline-item-custom">
                   {/* Diamond Node */}
                   <motion.div
@@ -914,10 +915,10 @@ const About = () => {
                     <span style={{ color: '#c9a84c', fontFamily: '"Cormorant Garamond", serif', fontSize: '15px', letterSpacing: '2px', fontWeight: '600' }}>
                       {item.year}
                     </span>
-                    <h4 className="font-playfair" style={{ fontSize: '20px', color: '#ffffff', marginTop: '4px', marginBottom: '8px', fontWeight: 'normal' }}>
+                    <h4 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '20px', color: '#ffffff', marginTop: '4px', marginBottom: '8px', fontWeight: 'normal' }}>
                       {item.title}
                     </h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6' }}>
+                    <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6' }}>
                       {item.desc}
                     </p>
                   </motion.div>
@@ -928,8 +929,8 @@ const About = () => {
 
           {/* Right Column: Centerpiece Visual */}
           <div className="about-sanctuary-container">
-            <h3 className="font-playfair text-gold" style={{ fontSize: '28px', fontWeight: '400', marginBottom: '35px', textAlign: 'center' }}>
-              The Sanctuary
+            <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '28px', fontWeight: '400', marginBottom: '35px', textAlign: 'center' }}>
+              {t('about.sanctuaryTitle')}
             </h3>
             <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }} className="border-light-card">
               <div style={{ position: 'relative', width: '100%', aspectRatio: '4/5', borderRadius: '18px', overflow: 'hidden', background: '#040408', zIndex: 2 }}>
@@ -964,154 +965,113 @@ const About = () => {
 
         {/* Metrics/Impact Section */}
         <div style={{ marginTop: '100px', position: 'relative', zIndex: 10 }}>
-          <h3 className="font-playfair text-gold" style={{ fontSize: '28px', fontWeight: '400', marginBottom: '40px', textAlign: 'center' }}>
-            Educational Impact
+          <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '28px', fontWeight: '400', marginBottom: '40px', textAlign: 'center' }}>
+            {t('about.impactTitle')}
           </h3>
           <div className="metrics-grid-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
-            <CounterUp value="500" suffix="+" label="Students Educated" />
-            <CounterUp value="15" suffix="+" label="Years Of Service" />
-            <CounterUp value="10" suffix="+" label="Quran Memorization Programs" />
-            <CounterUp value="10000" suffix="+" label="Community Reach" />
+            <CounterUp value="500" suffix="+" label={t('about.metrics.students')} />
+            <CounterUp value="15" suffix="+" label={t('about.metrics.years')} />
+            <CounterUp value="10" suffix="+" label={t('about.metrics.programs')} />
+            <CounterUp value="10000" suffix="+" label={t('about.metrics.community')} />
           </div>
         </div>
 
         {/* Core Pillars Section */}
         <div style={{ marginTop: '120px' }}>
-          <h3 className="font-playfair text-gold" style={{ fontSize: '28px', fontWeight: '400', marginBottom: '15px', textAlign: 'center' }}>
-            Core Pillars
+          <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '28px', fontWeight: '400', marginBottom: '15px', textAlign: 'center' }}>
+            {t('about.pillarsTitle')}
           </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px', textAlign: 'center', marginBottom: '50px', letterSpacing: '1px' }}>
-            The spiritual foundations guiding every student and scholar.
+          <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '14px', textAlign: 'center', marginBottom: '50px', letterSpacing: '1px' }}>
+            {t('about.pillarsSubtitle')}
           </p>
 
           <div className="value-card-grid">
-            {/* ILM */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
-              viewport={{ once: true, margin: "-80px" }} 
-              transition={{ duration: 0.6, delay: 0.1 }} 
-              className="value-card"
-              onClick={() => setActiveModal(0)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setActiveModal(0);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              style={{ cursor: 'none' }}
-            >
-              <div className="card-bg-art ilm-art" />
-              <div className="value-icon-container">
-                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  <path d="M8 6h8M8 10h8M8 14h5" />
-                </svg>
-              </div>
-              <h4 className="font-playfair" style={{ fontSize: '22px', color: '#ffffff', letterSpacing: '2px', marginBottom: '15px', fontWeight: 'normal' }}>
-                ILM
-              </h4>
-              <span style={{ display: 'block', color: '#c9a84c', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '15px' }}>
-                — Knowledge —
-              </span>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '15px' }}>
-                The foundation of all action and insight. We cultivate rigorous Quranic scholarship alongside secular wisdom to develop enlightened minds.
-              </p>
-              <span className="explore-indicator">Click to Explore ✦</span>
-            </motion.div>
-
-            {/* IMAAN */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
-              viewport={{ once: true, margin: "-80px" }} 
-              transition={{ duration: 0.6, delay: 0.25 }} 
-              className="value-card"
-              onClick={() => setActiveModal(1)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setActiveModal(1);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              style={{ cursor: 'none' }}
-            >
-              <div className="card-bg-art imaan-art" />
-              <div className="value-icon-container">
-                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-                  <path d="M6 20 V 10 C 6 6 12 3 12 3 C 12 3 18 6 18 10 V 20 Z" />
-                  <path d="M 12 8 A 4 4 0 1 0 15 12 A 4.5 4.5 0 1 1 12 8 Z" fill="currentColor" />
-                  <circle cx="12" cy="17" r="1.5" fill="#e8c96d" />
-                </svg>
-              </div>
-              <h4 className="font-playfair" style={{ fontSize: '22px', color: '#ffffff', letterSpacing: '2px', marginBottom: '15px', fontWeight: 'normal' }}>
-                IMAAN
-              </h4>
-              <span style={{ display: 'block', color: '#c9a84c', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '15px' }}>
-                — Faith —
-              </span>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '15px' }}>
-                Connecting the heart to the Creator. We nurture deep spiritual conviction and moral integrity, modeling life after the beautiful Sunnah.
-              </p>
-              <span className="explore-indicator">Click to Explore ✦</span>
-            </motion.div>
-
-            {/* IKHLAAS */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
-              viewport={{ once: true, margin: "-80px" }} 
-              transition={{ duration: 0.6, delay: 0.4 }} 
-              className="value-card"
-              onClick={() => setActiveModal(2)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setActiveModal(2);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              style={{ cursor: 'none' }}
-            >
-              <div className="card-bg-art ikhlaas-art" />
-              <div className="value-icon-container">
-                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-                  <rect x="5" y="5" width="14" height="14" rx="1.5" transform="rotate(45 12 12)" />
-                  <circle cx="12" cy="12" r="5.5" strokeWidth="0.8" strokeDasharray="2 2" />
-                  <polygon points="12,8 13.5,11 16.5,12 13.5,13 12,16 10.5,13 7.5,12 10.5,11" fill="currentColor" />
-                </svg>
-              </div>
-              <h4 className="font-playfair" style={{ fontSize: '22px', color: '#ffffff', letterSpacing: '2px', marginBottom: '15px', fontWeight: 'normal' }}>
-                IKHLAAS
-              </h4>
-              <span style={{ display: 'block', color: '#c9a84c', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '15px' }}>
-                — Sincerity —
-              </span>
-              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '15px' }}>
-                Purity of intent in every endeavor. We instill the mindset that all study, teaching, and community service must be performed solely for the sake of Allah.
-              </p>
-              <span className="explore-indicator">Click to Explore ✦</span>
-            </motion.div>
+            {[
+              {
+                key: 'ilm',
+                idx: 0,
+                icon: (
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    <path d="M8 6h8M8 10h8M8 14h5" />
+                  </svg>
+                ),
+                artClass: 'ilm-art'
+              },
+              {
+                key: 'imaan',
+                idx: 1,
+                icon: (
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <path d="M6 20 V 10 C 6 6 12 3 12 3 C 12 3 18 6 18 10 V 20 Z" />
+                    <path d="M 12 8 A 4 4 0 1 0 15 12 A 4.5 4.5 0 1 1 12 8 Z" fill="currentColor" />
+                    <circle cx="12" cy="17" r="1.5" fill="#e8c96d" />
+                  </svg>
+                ),
+                artClass: 'imaan-art'
+              },
+              {
+                key: 'ikhlaas',
+                idx: 2,
+                icon: (
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <rect x="5" y="5" width="14" height="14" rx="1.5" transform="rotate(45 12 12)" />
+                    <circle cx="12" cy="12" r="5.5" strokeWidth="0.8" strokeDasharray="2 2" />
+                    <polygon points="12,8 13.5,11 16.5,12 13.5,13 12,16 10.5,13 7.5,12 10.5,11" fill="currentColor" />
+                  </svg>
+                ),
+                artClass: 'ikhlaas-art'
+              }
+            ].map((pillar) => (
+              <motion.div 
+                key={pillar.key}
+                initial={{ opacity: 0, y: 40 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: true, margin: "-80px" }} 
+                transition={{ duration: 0.6, delay: 0.1 * (pillar.idx + 1) }} 
+                className="value-card"
+                onClick={() => setActiveModal(pillar.idx)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setActiveModal(pillar.idx);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: 'none' }}
+              >
+                <div className={`card-bg-art ${pillar.artClass}`} />
+                <div className="value-icon-container">
+                  {pillar.icon}
+                </div>
+                <h4 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '22px', color: '#ffffff', letterSpacing: '2px', marginBottom: '15px', fontWeight: 'normal' }}>
+                  {t(`about.pillars.${pillar.key}.title`)}
+                </h4>
+                <span style={{ display: 'block', color: '#c9a84c', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '15px' }}>
+                  {t(`about.pillars.${pillar.key}.label`)}
+                </span>
+                <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '15px' }}>
+                  {t(`about.pillars.${pillar.key}.desc`)}
+                </p>
+                <span className="explore-indicator">{t('about.clickExplore')}</span>
+              </motion.div>
+            ))}
           </div>
         </div>
 
         {/* Bottom Reveal Tagline */}
         <div ref={bottomRef} style={{ marginTop: '130px', textAlign: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }} className="font-playfair" style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.3' }}>
-              Seeking Knowledge.
+            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }} className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.3' }}>
+              {t('about.seekingKnowledge')}
             </motion.span>
-            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.3 }} className="font-playfair" style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#c9a84c', lineHeight: '1.3' }}>
-              Strengthening Faith.
+            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.3 }} className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#c9a84c', lineHeight: '1.3' }}>
+              {t('about.strengtheningFaith')}
             </motion.span>
-            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.6 }} className="font-playfair" style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.3' }}>
-              Serving Humanity.
+            <motion.span initial={{ opacity: 0, y: 15 }} animate={isBottomInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.6 }} className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.3' }}>
+              {t('about.servingHumanity')}
             </motion.span>
           </div>
 

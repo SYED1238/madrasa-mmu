@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
 
 :root {
   --bg-primary: #080810;
@@ -215,5 +215,48 @@ img {
   .value-card:hover, .metric-card:hover, .gallery-cinematic-card:hover {
     transform: none !important;
   }
+}
+
+/* =========================================
+   URDU RTL & TYPOGRAPHY SYSTEM
+   ========================================= */
+
+/* Use Nastaliq font globally when document lang is ur */
+[lang="ur"] {
+  font-family: 'Noto Nastaliq Urdu', 'Amiri', serif !important;
+}
+
+/* Target content blocks to read RTL and align text right */
+[lang="ur"] .ur-text {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Nastaliq text requires slightly larger line heights to prevent word vertical overlapping */
+[lang="ur"] p, 
+[lang="ur"] li,
+[lang="ur"] label,
+[lang="ur"] input,
+[lang="ur"] textarea,
+[lang="ur"] select,
+[lang="ur"] span:not(.font-amiri):not(.font-playfair), 
+[lang="ur"] a, 
+[lang="ur"] button {
+  line-height: 2 !important;
+}
+
+[lang="ur"] h1, 
+[lang="ur"] h2, 
+[lang="ur"] h3, 
+[lang="ur"] h4, 
+[lang="ur"] h5, 
+[lang="ur"] h6 {
+  line-height: 1.35 !important;
+}
+
+/* Specific displays like Hero title should keep compact spacing */
+[lang="ur"] .hero-brand,
+[lang="ur"] .hero-brand-line {
+  line-height: 1.05 !important;
 }
 

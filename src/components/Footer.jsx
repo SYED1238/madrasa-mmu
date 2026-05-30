@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-scroll';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
   const [showTopBtn, setShowTopBtn] = useState(false);
 
   useEffect(() => {
@@ -32,32 +35,39 @@ const Footer = () => {
         }}>
           
           {/* Column 1: Brand */}
-          <div>
+          <div className={isUrdu ? 'ur-text' : ''}>
             <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
               <span className="font-amiri text-gold" style={{ fontSize: '32px', lineHeight: '1.2' }}>م.م.ع</span>
-              <span className="font-playfair" style={{ fontSize: '18px', letterSpacing: '2px', color: 'var(--text-primary)' }}>
-                Madrasa e Madeenatul Uloom
+              <span className="font-playfair" style={{ fontSize: '18px', letterSpacing: '2px', color: 'var(--text-primary)', lineHeight: isUrdu ? '1.8' : '1.2' }}>
+                {t('contact.mmuName')}
               </span>
             </div>
             <p style={{ color: 'var(--gold)', fontStyle: 'italic', marginBottom: '15px' }}>
-              "Where Knowledge Meets Taqwa"
+              {t('footer.tagline')}
             </p>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6' }}>
-              Operating under the distinguished M.M.U. Trust (Madras-E-Madinathul-Uloom Trust), founded by Shri Haji Syed Muneer.
+              {t('footer.mmuTrust')}
             </p>
           </div>
 
           {/* Column 2: Quick Links */}
-          <div>
+          <div className={isUrdu ? 'ur-text' : ''}>
             <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '25px', position: 'relative' }}>
-              Quick Links
-              <div style={{ position: 'absolute', bottom: '-8px', left: 0, width: '40px', height: '2px', background: 'var(--gold)' }}></div>
+              {t('footer.quickLinks')}
+              <div style={{ position: 'absolute', bottom: '-8px', left: isUrdu ? 'auto' : 0, right: isUrdu ? 0 : 'auto', width: '40px', height: '2px', background: 'var(--gold)' }}></div>
             </h4>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {['Home', 'About', 'Programs', 'Gallery', 'Admissions', 'Contact'].map((link, idx) => (
+              {[
+                { name: 'home', label: t('navbar.home') },
+                { name: 'about', label: t('navbar.about') },
+                { name: 'programs', label: t('navbar.programs') },
+                { name: 'gallery', label: t('navbar.gallery') },
+                { name: 'admissions', label: t('navbar.admissions') },
+                { name: 'contact', label: t('navbar.contact') }
+              ].map((link, idx) => (
                 <li key={idx}>
                   <Link 
-                    to={link.toLowerCase()} 
+                    to={link.name} 
                     smooth={true} 
                     offset={-70} 
                     duration={500}
@@ -65,7 +75,7 @@ const Footer = () => {
                     onMouseOver={(e) => e.target.style.color = 'var(--gold)'}
                     onMouseOut={(e) => e.target.style.color = 'var(--text-muted)'}
                   >
-                    ➔ {link}
+                    {isUrdu ? '⬅ ' : '➔ '}{link.label}
                   </Link>
                 </li>
               ))}
@@ -73,18 +83,18 @@ const Footer = () => {
           </div>
 
           {/* Column 3: Contact & Social */}
-          <div>
+          <div className={isUrdu ? 'ur-text' : ''}>
             <h4 style={{ color: 'var(--text-primary)', fontSize: '18px', marginBottom: '25px', position: 'relative' }}>
-              Visit Us
-              <div style={{ position: 'absolute', bottom: '-8px', left: 0, width: '40px', height: '2px', background: 'var(--gold)' }}></div>
+              {t('footer.visitUs')}
+              <div style={{ position: 'absolute', bottom: '-8px', left: isUrdu ? 'auto' : 0, right: isUrdu ? 0 : 'auto', width: '40px', height: '2px', background: 'var(--gold)' }}></div>
             </h4>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '20px' }}>
-              📍 Ramanagara, Karnataka 562159<br/>
-              India
+              📍 {t('contact.address')}<br/>
+              {isUrdu ? 'بھارت' : 'India'}
             </p>
             
             {/* Social Icons (Placeholders) */}
-            <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'flex', gap: '15px', justifyContent: isUrdu ? 'flex-end' : 'flex-start' }}>
               {['FB', 'IG', 'YT'].map((platform, idx) => (
                 <a key={idx} href="#" style={{
                   width: '40px',
@@ -133,10 +143,10 @@ const Footer = () => {
           textAlign: 'center'
         }}>
           <p className="font-amiri" style={{ color: 'var(--gold)', fontSize: '20px', direction: 'rtl' }}>
-            "وَقُل رَّبِّ زِدْنِي عِلْمًا" — Surah Ta-Ha 20:114
+            "وَقُل رَّبِّ زِدْنِي عِلْمًا" — {isUrdu ? 'سورہ طہٰ 20:114' : 'Surah Ta-Ha 20:114'}
           </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
-            © 2025 Madrasa e Madeenatul Uloom | All Rights Reserved
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', fontFamily: isUrdu ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>
+            {t('footer.rights')}
           </p>
         </div>
       </div>

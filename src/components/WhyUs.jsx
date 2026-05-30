@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Custom Animated SVGs for Visuals
 const ManuscriptVisual = () => {
@@ -87,6 +88,8 @@ const CharacterVisual = () => {
 // Monumental Pillar Card Component
 const PillarCard = ({ pillar, isInView }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
 
   return (
     <motion.div
@@ -98,7 +101,7 @@ const PillarCard = ({ pillar, isInView }) => {
       className="pillar-luxury-card"
       style={{
         width: '100%',
-        textAlign: 'left',
+        textAlign: isUrdu ? 'right' : 'left',
         background: 'rgba(18, 18, 31, 0.4)',
         border: '1px solid rgba(201, 168, 76, 0.12)',
         display: 'block'
@@ -109,7 +112,7 @@ const PillarCard = ({ pillar, isInView }) => {
 
       <div style={{ position: 'relative', zIndex: 5 }}>
         {/* Top Row: Number & Label */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px', flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
           <span className="font-playfair pillar-num">{pillar.num}</span>
           <span className="pillar-label">{pillar.label}</span>
         </div>
@@ -123,16 +126,16 @@ const PillarCard = ({ pillar, isInView }) => {
         </div>
 
         {/* Headings */}
-        <h3 className="font-playfair pillar-heading">{pillar.title}</h3>
-        <h4 className="pillar-subtitle">{pillar.subtitle}</h4>
-        <p className="pillar-desc">{pillar.desc}</p>
+        <h3 className={`font-playfair pillar-heading ${isUrdu ? "ur-text" : ""}`}>{pillar.title}</h3>
+        <h4 className={`pillar-subtitle ${isUrdu ? "ur-text" : ""}`}>{pillar.subtitle}</h4>
+        <p className={`pillar-desc ${isUrdu ? "ur-text" : ""}`}>{pillar.desc}</p>
 
         {/* Metrics Grid */}
-        <div className="pillar-metrics-grid">
-          {pillar.metrics.map((metric, i) => (
+        <div className="pillar-metrics-grid" style={{ direction: isUrdu ? 'rtl' : 'ltr' }}>
+          {(pillar.metrics || []).map((metric, i) => (
             <div key={i} className="pillar-metric-item">
               <span className="pillar-metric-val">{metric.value}</span>
-              <span className="pillar-metric-lbl">{metric.label}</span>
+              <span className={`pillar-metric-lbl ${isUrdu ? "ur-text" : ""}`}>{metric.label}</span>
             </div>
           ))}
         </div>
@@ -143,6 +146,9 @@ const PillarCard = ({ pillar, isInView }) => {
 
 // Main Component
 const WhyUs = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
 
@@ -157,58 +163,27 @@ const WhyUs = () => {
 
   const isBottomInView = useInView(bottomRef, { once: true, margin: "-10%" });
 
+  const translatedPillars = t('whyUs.pillars', { returnObjects: true }) || [];
   const pillarsData = [
     {
       num: "01",
-      label: "Scholarship",
-      title: "Expert Ustaads",
-      subtitle: "Trained For Excellence.",
-      desc: "Our educators are qualified scholars who bring deep traditional understanding and academic rigor, ensuring proper guidance for every student.",
-      metrics: [
-        { value: "15+", label: "Ustaads" },
-        { value: "20+ Yrs", label: "Avg Experience" },
-        { value: "100%", label: "Dedicated" }
-      ],
-      visualType: "manuscript"
+      visualType: "manuscript",
+      ...(translatedPillars[0] || {})
     },
     {
       num: "02",
-      label: "Accessibility",
-      title: "Knowledge For Everyone",
-      subtitle: "No Child Left Behind.",
-      desc: "We believe sacred learning should be open to all. Thanks to generous community backing, we offer fully subsidized, free basic education.",
-      metrics: [
-        { value: "500+", label: "Students" },
-        { value: "Subsidized", label: "Education" },
-        { value: "Open", label: "To All" }
-      ],
-      visualType: "doorway"
+      visualType: "doorway",
+      ...(translatedPillars[1] || {})
     },
     {
       num: "03",
-      label: "Learning",
-      title: "Structured Path To Excellence",
-      subtitle: "Milestones Of Growth.",
-      desc: "Our curriculum leads students from basic alphabets and Tajweed to complete memorization and deep comprehension across key languages.",
-      metrics: [
-        { value: "Multiple", label: "Programs" },
-        { value: "4", label: "Languages" },
-        { value: "Daily", label: "Classes" }
-      ],
-      visualType: "roadmap"
+      visualType: "roadmap",
+      ...(translatedPillars[2] || {})
     },
     {
       num: "04",
-      label: "Character",
-      title: "Building Future Leaders",
-      subtitle: "Values Over Subjects.",
-      desc: "Education is incomplete without Adab (character). We nurture moral values, self-discipline, and community service in a safe environment.",
-      metrics: [
-        { value: "Adab First", label: "Priority" },
-        { value: "Safe", label: "Campus" },
-        { value: "Strong", label: "Moral Values" }
-      ],
-      visualType: "character"
+      visualType: "character",
+      ...(translatedPillars[3] || {})
     }
   ];
 
@@ -719,17 +694,23 @@ const WhyUs = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '18px' }}>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
             <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase' }}>
-              Our Foundation
+              {t('whyUs.eyebrow')}
             </span>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
           </div>
 
-          <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
-            Built Upon Four<br/>Timeless <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Pillars</span>
-          </h2>
+          {isUrdu ? (
+            <h2 className="font-playfair ur-text" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.4' }}>
+              {t('whyUs.heading')}
+            </h2>
+          ) : (
+            <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
+              Built Upon Four<br/>Timeless <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Pillars</span>
+            </h2>
+          )}
           
-          <p style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '720px', margin: '0 auto', lineHeight: '1.7', padding: '0 15px' }}>
-            Every student who walks through our doors benefits from a carefully balanced foundation of scholarship, accessibility, structured learning, and Islamic character.
+          <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '720px', margin: '0 auto', lineHeight: '1.7', padding: '0 15px' }}>
+            {t('whyUs.description')}
           </p>
         </div>
 
@@ -770,7 +751,7 @@ const WhyUs = () => {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}
               >
                 <span 
-                  className="font-playfair text-gold" 
+                  className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} 
                   style={{ 
                     fontSize: 'clamp(24px, 3.8vw, 38px)', 
                     fontWeight: '300', 
@@ -779,10 +760,11 @@ const WhyUs = () => {
                     letterSpacing: '0.5px'
                   }}
                 >
-                  Knowledge. Faith. Character. Service.
+                  {t('whyUs.bottomStatement')}
                 </span>
                 
                 <span 
+                  className={isUrdu ? "ur-text" : ""}
                   style={{ 
                     color: 'var(--text-muted)', 
                     fontSize: '16px', 
@@ -790,7 +772,7 @@ const WhyUs = () => {
                     marginTop: '8px'
                   }}
                 >
-                  These are not subjects we teach. They are values we live.
+                  {t('whyUs.bottomTagline')}
                 </span>
                 
                 {/* Scroll-reveal divider */}

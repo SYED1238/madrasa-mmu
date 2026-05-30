@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Counter = ({ end, duration, label }) => {
+  const { i18n } = useTranslation();
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const counterRef = useRef(null);
@@ -43,7 +45,15 @@ const Counter = ({ end, duration, label }) => {
       <h3 className="font-playfair text-gold" style={{ fontSize: '36px', marginBottom: '10px' }}>
         {count}+
       </h3>
-      <p style={{ color: 'var(--text-muted)', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+      <p 
+        style={{ 
+          color: 'var(--text-muted)', 
+          fontSize: '14px', 
+          textTransform: 'uppercase', 
+          letterSpacing: '1px',
+          fontFamily: i18n.language === 'ur' ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined
+        }}
+      >
         {label}
       </p>
     </div>
@@ -51,6 +61,8 @@ const Counter = ({ end, duration, label }) => {
 };
 
 const Stats = () => {
+  const { t } = useTranslation();
+
   return (
     <section style={{
       backgroundColor: 'var(--bg-card)',
@@ -68,10 +80,10 @@ const Stats = () => {
         gap: '30px',
         padding: '0 20px'
       }}>
-        <Counter end={40} duration={2000} label="Years of Service" />
-        <Counter end={500} duration={2000} label="Students Enrolled" />
-        <Counter end={15} duration={2000} label="Qualified Ustaads" />
-        <Counter end={1000} duration={2000} label="Community Members" />
+        <Counter end={40} duration={2000} label={t('stats.years')} />
+        <Counter end={500} duration={2000} label={t('stats.students')} />
+        <Counter end={15} duration={2000} label={t('stats.ustaads')} />
+        <Counter end={1000} duration={2000} label={t('stats.community')} />
       </div>
     </section>
   );

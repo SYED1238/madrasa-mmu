@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -14,6 +15,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 
 const CinematicLoader = ({ onComplete }) => {
+  const { t, i18n } = useTranslation();
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -47,6 +49,16 @@ const CinematicLoader = ({ onComplete }) => {
   };
 
   const renderName = () => {
+    const isUrdu = i18n.language === 'ur';
+    if (isUrdu) {
+      const text = t('loader.name');
+      return text.split('').map((char, idx) => (
+        <motion.span key={idx} variants={letter} style={{ fontFamily: "'Noto Nastaliq Urdu', 'Amiri', serif" }}>
+          {char === ' ' ? '\u00A0' : char}
+        </motion.span>
+      ));
+    }
+
     const parts = [
       { text: "Madrasa ", style: {} },
       { text: "e", style: { fontStyle: 'italic', color: '#c9a84c' } },
@@ -270,106 +282,108 @@ const CinematicLoader = ({ onComplete }) => {
         </motion.div>
 
         {/* Tagline 1 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="loader-tagline"
-        >
-          <span>——</span>
-          <span>ILM • IMAAN • IKHLAAS</span>
-          <span>——</span>
-        </motion.div>
-
-        {/* Loading Bar Section */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-          
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            style={{
-              color: 'rgba(201,168,76,0.7)',
-              fontSize: '12px',
-              letterSpacing: '6px',
-              marginBottom: '12px',
-              animation: 'pulseGlow 2s infinite'
-            }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="loader-tagline"
+            style={{ fontFamily: i18n.language === 'ur' ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}
           >
-            L O A D I N G . . .
+            <span>——</span>
+            <span>{t('loader.motto')}</span>
+            <span>——</span>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', width: '100%', justifyContent: 'center' }}
-          >
-            {/* Left Diamond */}
-            <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
+          {/* Loading Bar Section */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              style={{
+                color: 'rgba(201,168,76,0.7)',
+                fontSize: '12px',
+                letterSpacing: '6px',
+                marginBottom: '12px',
+                animation: 'pulseGlow 2s infinite',
+                fontFamily: i18n.language === 'ur' ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined
+              }}
+            >
+              {t('loader.loading')}
+            </motion.div>
 
-            {/* Outer Bar */}
-            <div className="loader-bar-outer">
-              {/* Corner Decorations */}
-              <div style={{ position: 'absolute', top: '-2px', left: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
-              <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderRight: '2px solid #c9a84c' }}></div>
-              <div style={{ position: 'absolute', bottom: '-2px', left: '-2px', width: '6px', height: '6px', borderBottom: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
-              <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '6px', height: '6px', borderBottom: '2px solid #c9a84c', borderRight: '2px solid #c9a84c' }}></div>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', width: '100%', justifyContent: 'center' }}
+            >
+              {/* Left Diamond */}
+              <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
 
-              {/* Inner Fill Bar */}
-              <motion.div
-                initial={{ width: '0%' }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 2.2, delay: 0.0, ease: "linear" }}
-                style={{
-                  height: '100%',
-                  background: 'linear-gradient(90deg, rgba(201,168,76,0.3) 0%, #c9a84c 50%, #e8c96d 70%, #c9a84c 100%)',
-                  borderRadius: '3px',
-                  boxShadow: '0 0 20px rgba(201,168,76,0.7), 0 0 40px rgba(201,168,76,0.3)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-              >
-                {/* Glint traveling along bar */}
-                <div style={{
-                  position: 'absolute',
-                  top: 0, bottom: 0, width: '150px',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
-                  animation: 'barGlint 1.5s linear infinite'
-                }} />
-              </motion.div>
-            </div>
+              {/* Outer Bar */}
+              <div className="loader-bar-outer">
+                {/* Corner Decorations */}
+                <div style={{ position: 'absolute', top: '-2px', left: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
+                <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '6px', height: '6px', borderTop: '2px solid #c9a84c', borderRight: '2px solid #c9a84c' }}></div>
+                <div style={{ position: 'absolute', bottom: '-2px', left: '-2px', width: '6px', height: '6px', borderBottom: '2px solid #c9a84c', borderLeft: '2px solid #c9a84c' }}></div>
+                <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '6px', height: '6px', borderBottom: '2px solid #c9a84c', borderRight: '2px solid #c9a84c' }}></div>
 
-            {/* Right Diamond */}
-            <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
-          </motion.div>
+                {/* Inner Fill Bar */}
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 2.2, delay: 0.0, ease: "linear" }}
+                  style={{
+                    height: '100%',
+                    background: 'linear-gradient(90deg, rgba(201,168,76,0.3) 0%, #c9a84c 50%, #e8c96d 70%, #c9a84c 100%)',
+                    borderRadius: '3px',
+                    boxShadow: '0 0 20px rgba(201,168,76,0.7), 0 0 40px rgba(201,168,76,0.3)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* Glint traveling along bar */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0, bottom: 0, width: '150px',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
+                    animation: 'barGlint 1.5s linear infinite'
+                  }} />
+                </motion.div>
+              </div>
 
-          {/* Percentage */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="font-playfair"
-            style={{
-              color: '#ffffff',
-              fontSize: '22px',
-              fontWeight: '500',
-              marginBottom: '30px'
-            }}
-          >
-            {progress}%
-          </motion.div>
+              {/* Right Diamond */}
+              <span style={{ color: 'var(--gold)', fontSize: '10px', flexShrink: 0 }}>◆</span>
+            </motion.div>
 
-          {/* Bottom Tagline */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="loader-bottom-tagline"
-          >
-            <span className="loader-bottom-tagline-text">
-              ✦ SEEKING KNOWLEDGE • SERVING UMMAH ✦
-            </span>
+            {/* Percentage */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="font-playfair"
+              style={{
+                color: '#ffffff',
+                fontSize: '22px',
+                fontWeight: '500',
+                marginBottom: '30px'
+              }}
+            >
+              {progress}%
+            </motion.div>
+
+            {/* Bottom Tagline */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="loader-bottom-tagline"
+            >
+              <span className="loader-bottom-tagline-text" style={{ fontFamily: i18n.language === 'ur' ? "'Noto Nastaliq Urdu', 'Amiri', serif" : undefined }}>
+                {t('loader.tagline')}
+              </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '40px', height: '1px', backgroundColor: 'rgba(201,168,76,0.4)' }}></div>
               <span style={{ color: 'var(--gold)', fontSize: '10px' }}>❖</span>

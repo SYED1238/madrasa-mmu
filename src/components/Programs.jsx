@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Custom Animated SVGs for Programs
 const QuranVisual = () => (
@@ -101,6 +102,9 @@ const CharacterVisual = () => (
 
 // Main Component
 const Programs = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
   const [wheelTimeout, setWheelTimeout] = useState(false);
@@ -139,7 +143,92 @@ const Programs = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIndex]);
 
-  const programs = [
+  const programs = isUrdu ? [
+    {
+      num: "01",
+      tag: "حفظ",
+      title: "حفظِ قرآن",
+      subtitle: "تجوید کے ساتھ حفظ",
+      desc: "طلباء کے لیے تجوید، خوبصورت تلاوت اور روزانہ اسباق کے اعادہ کے ساتھ قرآن مجید کو حفظ کرنے کا مخصوص شعبہ۔",
+      outcomes: [
+        "قرآن مجید کا مکمل حفظ",
+        "تجوید کے قواعد کے ساتھ درست تلفظ",
+        "روزانہ سبق اور اعادہ کا منظم دور",
+        "سنتِ نبوی کے مطابق کردار سازی"
+      ],
+      visualType: "quran"
+    },
+    {
+      num: "02",
+      tag: "عالم",
+      title: "عالم کورس",
+      subtitle: "روایتی اسلامی علوم کی تدریس",
+      desc: "عربی قواعد، فقہ، تفسیر اور حدیث کا جامع نصاب، جو معاصر دنیا میں رہنمائی کے لیے علماء کی تربیت کرتا ہے۔",
+      outcomes: [
+        "شریعت و فقہ کا گہرا فہم",
+        "علومِ حدیث کا تفصیلی مطالعہ",
+        "عربی زبان و ادب پر مکمل مہارت",
+        "خطابت اور سماجی رہنمائی کی صلاحیت"
+      ],
+      visualType: "aalim"
+    },
+    {
+      num: "03",
+      tag: "مکتب",
+      title: "مکتب کلاسز",
+      subtitle: "ابتدائی قرآنی بنیاد",
+      desc: "دینی تعلیم کے سفر کا آغاز کرنے والے بچوں کے لیے، ناظرہ قرآن، نماز، بنیادی عقائد اور آداب کی تدریس۔",
+      outcomes: [
+        "روانی کے ساتھ ناظرہ قرآن پڑھنا",
+        "روزمرہ کی دعائیں اور اذکار",
+        "بنیادی اسلامی عقائد و معلومات",
+        "اخلاقی اقدار اور آدابِ زندگی"
+      ],
+      visualType: "maktab"
+    },
+    {
+      num: "04",
+      tag: "زبان",
+      title: "عربی زبان و ادب",
+      subtitle: "کلاسیکی عربی فہم",
+      desc: "طلباء کو قرآنی زبان پڑھنے، لکھنے اور سمجھنے کے قابل بنانے کے لیے صرف و نحو (گرامر) کی تفصیلی تدریس۔",
+      outcomes: [
+        "عربی گرامر کے قوانین کا فہم",
+        "قرآنی آیات کا براہِ راست ترجمہ",
+        "عربی الفاظ کا وسیع ذخیرہ",
+        "کلاسیکی کتب کا فہم و ترجمہ"
+      ],
+      visualType: "arabic"
+    },
+    {
+      num: "05",
+      tag: "خواندگی",
+      title: "اردو اور کنڑ",
+      subtitle: "مقامی زبانوں کا فہم",
+      desc: "طلباء کو مقامی اور علاقائی زبانوں میں تحریر و تقریر اور موثر گفتگو کے قابل بنانا تاکہ سماجی رابطہ بہتر ہو۔",
+      outcomes: [
+        "علاقائی رسم الخط اور زبانوں پر عبور",
+        "مقامی کمیونٹی کے ساتھ مضبوط رابطہ",
+        "مکالمے اور ابلاغ کی صلاحیت",
+        "تحریری و علمی سرگرمیوں میں شمولیت"
+      ],
+      visualType: "languages"
+    },
+    {
+      num: "06",
+      tag: "اخلاق",
+      title: "اخلاق و تربیت",
+      subtitle: "اخلاقی و عملی تربیت",
+      desc: "ہمارے نظامِ تعلیم کا اہم ترین حصہ جس میں نبوی اخلاق، آدابِ زندگی اور خدمتِ خلق کا جذبہ پیدا کیا جاتا ہے۔",
+      outcomes: [
+        "اخلاقِ حسنہ کی عملی تربیت",
+        "روزمرہ زندگی میں سنت کا نفاذ",
+        "فلاحی اور سماجی کاموں کا جذبہ",
+        "مثبت اور پرامن طرزِ زندگی"
+      ],
+      visualType: "character"
+    }
+  ] : [
     {
       num: "01",
       tag: "Tahfiz",
@@ -564,17 +653,23 @@ const Programs = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '18px' }}>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
             <span style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '5px', fontWeight: '700', textTransform: 'uppercase' }}>
-              Pathways Of Knowledge
+              {t('programs.eyebrow')}
             </span>
             <motion.div initial={{ width: 0 }} whileInView={{ width: '40px' }} viewport={{ once: true }} transition={{ duration: 0.8 }} style={{ height: '1px', backgroundColor: '#c9a84c' }} />
           </div>
 
-          <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
-            Every Student Begins A<br/>Different <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Journey</span>
-          </h2>
+          {isUrdu ? (
+            <h2 className="font-playfair ur-text" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.4' }}>
+              {t('programs.title')}
+            </h2>
+          ) : (
+            <h2 className="font-playfair" style={{ fontSize: 'clamp(34px, 5.2vw, 56px)', color: '#ffffff', fontWeight: '300', marginBottom: '20px', lineHeight: '1.2' }}>
+              Every Student Begins A<br/>Different <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>Journey</span>
+            </h2>
+          )}
           
-          <p style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '680px', margin: '0 auto', lineHeight: '1.7' }}>
-            Discover the programs that nurture faith, knowledge, character, and lifelong learning.
+          <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '15.5px', maxWidth: '680px', margin: '0 auto', lineHeight: '1.7' }}>
+            {t('programs.desc')}
           </p>
         </div>
 
@@ -614,7 +709,8 @@ const Programs = () => {
                   className={`program-luxury-slide ${isActive ? 'active' : ''}`}
                   style={{
                     width: `${slideWidth}vw`,
-                    marginRight: `${gapWidth}vw`
+                    marginRight: `${gapWidth}vw`,
+                    textAlign: isUrdu ? 'right' : 'left'
                   }}
                   onClick={() => setActiveIndex(idx)}
                 >
@@ -623,16 +719,18 @@ const Programs = () => {
                   <div className="program-card-grid">
                     {/* Left Column Content */}
                     <div>
-                      <span className="program-slide-badge">Pillar {prog.num} • {prog.tag}</span>
-                      <h3 className="font-playfair program-slide-title">{prog.title}</h3>
-                      <h4 className="program-slide-subtitle">{prog.subtitle}</h4>
-                      <p className="program-slide-desc">{prog.desc}</p>
+                      <span className="program-slide-badge" style={{ direction: isUrdu ? 'rtl' : 'ltr' }}>
+                        {isUrdu ? "شعبہ" : "Pillar"} {prog.num} • {prog.tag}
+                      </span>
+                      <h3 className={`font-playfair program-slide-title ${isUrdu ? "ur-text" : ""}`}>{prog.title}</h3>
+                      <h4 className={`program-slide-subtitle ${isUrdu ? "ur-text" : ""}`}>{prog.subtitle}</h4>
+                      <p className={`program-slide-desc ${isUrdu ? "ur-text" : ""}`}>{prog.desc}</p>
 
-                      <div className="program-outcomes-list">
+                      <div className="program-outcomes-list" style={{ direction: isUrdu ? 'rtl' : 'ltr' }}>
                         {prog.outcomes.map((outcome, i) => (
-                          <div key={i} className="program-outcome-item">
+                          <div key={i} className="program-outcome-item" style={{ flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
                             <span className="program-outcome-bullet">✦</span>
-                            <span>{outcome}</span>
+                            <span className={isUrdu ? "ur-text" : ""}>{outcome}</span>
                           </div>
                         ))}
                       </div>
@@ -680,7 +778,7 @@ const Programs = () => {
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}
               >
                 <span 
-                  className="font-playfair text-gold" 
+                  className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} 
                   style={{ 
                     fontSize: 'clamp(22px, 3.5vw, 36px)', 
                     fontWeight: '300', 
@@ -688,7 +786,7 @@ const Programs = () => {
                     maxWidth: '800px'
                   }}
                 >
-                  "Every Program. A Different Path. One Destination. Knowledge."
+                  {isUrdu ? "ہر تعلیمی شعبہ، ایک الگ راستہ، ایک منزل: علم۔" : "\"Every Program. A Different Path. One Destination. Knowledge.\""}
                 </span>
                 
                 {/* Gold divider */}

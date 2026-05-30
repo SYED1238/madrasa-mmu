@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const StatCounter = ({ value, label, suffix = "" }) => {
   const [count, setCount] = useState(0);
@@ -42,6 +43,9 @@ const StatCounter = ({ value, label, suffix = "" }) => {
 };
 
 const Gallery = () => {
+  const { t, i18n } = useTranslation();
+  const isUrdu = i18n.language === 'ur';
+
   const [viewMode, setViewMode] = useState('gallery'); // 'gallery' or 'timeline'
   const [activePhoto, setActivePhoto] = useState(null); // index or null
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -100,7 +104,56 @@ const Gallery = () => {
     });
   };
 
-  const galleryItems = [
+  const galleryItems = isUrdu ? [
+    {
+      id: 0,
+      title: "قرآنی تعلیم",
+      src: "/gallery-1.jpg",
+      sizeClass: "grid-item-large-tall",
+      story: "طلباء مستند اساتذہ کی رہنمائی میں روزانہ حلقہ کی شکل میں قرآن مجید کی تلاوت اور حفظ کرتے ہیں، جس میں تجوید اور تفسیر پر توجہ دی جاتی ہے۔",
+      animationDir: "up"
+    },
+    {
+      id: 1,
+      title: "روزمرہ نمازیں",
+      src: "/gallery-2.jpg",
+      sizeClass: "grid-item-medium-wide",
+      story: "مدینۃ العلوم کا روحانی مرکز۔ وسیع نماز ہال میں، طلباء پانچ وقت کندھے سے کندھا ملا کر کھڑے ہوتے ہیں، جس سے نظم و ضبط اور خشوع پیدا ہوتا ہے۔",
+      animationDir: "left"
+    },
+    {
+      id: 2,
+      title: "طلباء کے اجتماعات",
+      src: "/gallery-3.jpg",
+      sizeClass: "grid-item-normal",
+      story: "ہفتہ وار اجتماعات طلباء کو عوامی خطاب، نعت خوانی، اور اخلاقی تقاریر کے ذریعے اپنی صلاحیتوں کو نکھارنے کا موقع فراہم کرتے ہیں۔",
+      animationDir: "right"
+    },
+    {
+      id: 3,
+      title: "کمیونٹی سرگرمیاں",
+      src: "/gallery-4.jpg",
+      sizeClass: "grid-item-normal",
+      story: "ایم ایم یو ایک سماجی مرکز کے طور پر بھی کام کرتا ہے۔ ہم ضرورت مند خاندانوں کی مدد کے لیے باقاعدہ فلاحی اور امدادی مہمات چلاتے ہیں۔",
+      animationDir: "up"
+    },
+    {
+      id: 4,
+      title: "اسلامی تقریبات",
+      src: "/bismillah-bg.jpg",
+      sizeClass: "grid-item-large-wide",
+      story: "خوشی اور روحانیت کے لمحات۔ عید میلاد النبی جیسے بابرکت ایام کو چراغاں، تاریخی خطابات اور محبت بھرے اجتماعات کے ساتھ منایا جاتا ہے۔",
+      animationDir: "left"
+    },
+    {
+      id: 5,
+      title: "علمی نشستیں",
+      src: "/loader-bg.jpg",
+      sizeClass: "grid-item-medium-tall",
+      story: "کلاسیکی الہیات، فقہ اور جدید اخلاقی علوم پر مبنی خصوصی سیمینار۔ طلباء موجودہ دور کے چیلنجز کے حل کے لیے اسلامی تعلیمات کا مطالعہ کرتے ہیں۔",
+      animationDir: "right"
+    }
+  ] : [
     {
       id: 0,
       title: "Quranic Learning",
@@ -151,7 +204,38 @@ const Gallery = () => {
     }
   ];
 
-  const timelineEvents = [
+  const timelineEvents = isUrdu ? [
+    {
+      time: "08:00 AM",
+      title: "صبح کا حفظِ قرآن (دور)",
+      desc: "ہمارے دن کا آغاز صبح سویرے پرسکون ماحول میں ہوتا ہے۔ طلباء تجوید اور گہرے فہم کے ساتھ نیا سبق یاد کرتے ہیں۔",
+      category: "طلباء کی سرگرمیاں"
+    },
+    {
+      time: "11:00 AM",
+      title: "جدید عصری علوم",
+      desc: "طلباء جدید کلاس رومز میں کمپیوٹر کی تعلیم، سائنس اور ریاضی جیسے عصری علوم حاصل کرتے ہیں تاکہ وہ مستقبل کے لیے تیار ہو سکیں۔",
+      category: "تعلیمی سرگرمیاں"
+    },
+    {
+      time: "02:00 PM",
+      title: "نمازِ ظہر اور اخلاقی درس",
+      desc: "باجماعت نمازِ ظہر کے بعد، اساتذہ اخلاقی اقدار، دیانت اور سماجی ہمدردی پر مبنی خصوصی گفتگو کرتے ہیں۔",
+      category: "روحانی اجتماعات"
+    },
+    {
+      time: "04:30 PM",
+      title: "سماجی بہبود اور فلاحی کام",
+      desc: "ایمان کو عمل میں بدلنا۔ طلباء رام نگر کے ضرورت مندوں کے لیے امدادی سامان کی پیکنگ اور فلاحی سرگرمیوں میں حصہ لیتے ہیں۔",
+      category: "کمیونٹی پروگرامز"
+    },
+    {
+      time: "08:00 PM",
+      title: "نمازِ عشاء اور روحانی حلقہ",
+      desc: "ہم دن کا اختتام اللہ کے ذکر سے کرتے ہیں۔ طلباء مرکزی ہال میں خود احتسابی، دعاؤں اور باہمی ہمدردی کے حلقے میں جمع ہوتے ہیں۔",
+      category: "روحانی اجتماعات"
+    }
+  ] : [
     {
       time: "08:00 AM",
       title: "Morning Quran Memorization (Hifz)",
@@ -655,7 +739,7 @@ const Gallery = () => {
               style={{ height: '1px', backgroundColor: 'var(--gold)' }} 
             />
             <span style={{ color: 'var(--gold)', fontSize: '13px', letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '600' }}>
-              Our Journey
+              {t('gallery.eyebrow')}
             </span>
             <motion.div 
               initial={{ width: 0 }}
@@ -666,22 +750,22 @@ const Gallery = () => {
             />
           </div>
           
-          <h2 ref={titleRef} className="font-playfair" style={{ fontSize: 'clamp(34px, 5vw, 52px)', color: '#ffffff', fontWeight: '300', marginBottom: '15px' }}>
+          <h2 ref={titleRef} className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(34px, 5vw, 52px)', color: '#ffffff', fontWeight: '300', marginBottom: '15px' }}>
             {isTitleInView ? (
               <motion.span
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                Every Image Tells A Story
+                {t('gallery.title')}
               </motion.span>
             ) : (
-              "Every Image Tells A Story"
+              t('gallery.title')
             )}
           </h2>
           
-          <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '640px', margin: '0 auto', lineHeight: '1.7', fontStyle: 'italic' }}>
-            "Step inside the classrooms, prayer halls, gatherings, and moments that shape future generations of scholarship and faith."
+          <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '640px', margin: '0 auto', lineHeight: '1.7', fontStyle: 'italic' }}>
+            {t('gallery.desc')}
           </p>
         </div>
 
@@ -692,14 +776,14 @@ const Gallery = () => {
             onClick={() => setViewMode('gallery')}
             style={{ borderTopLeftRadius: '25px', borderBottomLeftRadius: '25px' }}
           >
-            Gallery View
+            {isUrdu ? "تصویری گیلری" : "Gallery View"}
           </button>
           <button 
             className={`mode-toggle-btn ${viewMode === 'timeline' ? 'active' : ''}`}
             onClick={() => setViewMode('timeline')}
             style={{ borderTopRightRadius: '25px', borderBottomRightRadius: '25px' }}
           >
-            Timeline View
+            {isUrdu ? "روزمرہ شیڈول" : "Timeline View"}
           </button>
         </div>
 
@@ -729,6 +813,7 @@ const Gallery = () => {
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ duration: 0.7 }}
                     onClick={() => setActivePhoto(idx)}
+                    style={{ textAlign: isUrdu ? 'right' : 'left' }}
                   >
                     <div className="gallery-cinematic-card">
                       <div className="gallery-card-inner">
@@ -739,9 +824,9 @@ const Gallery = () => {
                         />
                         {/* Hover Overlay */}
                         <div className="gallery-card-overlay">
-                          <span className="gallery-overlay-lbl">MMU Moments</span>
-                          <h4 className="font-playfair gallery-overlay-ttl">{item.title}</h4>
-                          <p className="gallery-overlay-story">{item.story.substring(0, 80)}...</p>
+                          <span className="gallery-overlay-lbl">{isUrdu ? "ایم ایم یو یادگار لمحات" : "MMU Moments"}</span>
+                          <h4 className={`font-playfair gallery-overlay-ttl ${isUrdu ? "ur-text" : ""}`}>{item.title}</h4>
+                          <p className={`gallery-overlay-story ${isUrdu ? "ur-text" : ""}`}>{item.story.substring(0, 80)}...</p>
                         </div>
                       </div>
                     </div>
@@ -769,7 +854,7 @@ const Gallery = () => {
                     {/* Time block */}
                     <div className="timeline-event-side" style={{ display: 'flex', justifyContent: isLeft ? 'flex-end' : 'flex-start', padding: '5px 15px' }}>
                       <span className="font-playfair text-gold" style={{ fontSize: '24px', fontWeight: 'bold', textShadow: '0 0 10px rgba(201,168,76,0.3)' }}>
-                        {item.time}
+                        {isUrdu ? item.time.replace("AM", "صبح").replace("PM", "شام") : item.time}
                       </span>
                     </div>
 
@@ -788,15 +873,16 @@ const Gallery = () => {
                         border: '1px solid rgba(201, 168, 76, 0.12)',
                         borderRadius: '12px',
                         padding: '20px 24px',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        textAlign: isUrdu ? 'right' : 'left'
                       }}>
-                        <span style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
+                        <span className={isUrdu ? "ur-text" : ""} style={{ color: '#c9a84c', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase', display: 'block', marginBottom: '5px' }}>
                           {item.category}
                         </span>
-                        <h4 className="font-playfair" style={{ fontSize: '18px', color: '#ffffff', marginBottom: '8px', fontWeight: 'normal' }}>
+                        <h4 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: '18px', color: '#ffffff', marginBottom: '8px', fontWeight: 'normal' }}>
                           {item.title}
                         </h4>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                        <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
                           {item.desc}
                         </p>
                       </div>
@@ -810,10 +896,10 @@ const Gallery = () => {
 
         {/* Statistics Floating Counters Section */}
         <div className="gallery-stats-floatbar">
-          <StatCounter value="25000" suffix="+" label="Hours Of Learning" />
-          <StatCounter value="500" suffix="+" label="Students Educated" />
-          <StatCounter value="15" suffix="+" label="Years Of Service" />
-          <StatCounter value="12000" suffix="+" label="Community Impact" />
+          <StatCounter value="25000" suffix="+" label={isUrdu ? "تعلیمی اوقات" : "Hours Of Learning"} />
+          <StatCounter value="500" suffix="+" label={isUrdu ? "زیرِ تعلیم طلباء" : "Students Educated"} />
+          <StatCounter value="15" suffix="+" label={isUrdu ? "سالہ خدمات" : "Years Of Service"} />
+          <StatCounter value="12000" suffix="+" label={isUrdu ? "کمیونٹی پر اثر" : "Community Impact"} />
         </div>
 
         {/* Featured Showcase Centerpiece Section */}
@@ -860,12 +946,12 @@ const Gallery = () => {
                 <div style={{ width: '30px', height: '1px', backgroundColor: '#c9a84c' }} />
               </div>
 
-              <h3 className="font-playfair text-gold" style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 'normal', textAlign: 'center', margin: 0, textShadow: '0 0 25px rgba(201,168,76,0.45)' }}>
-                Where Faith Meets Knowledge
+              <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 'normal', textAlign: 'center', margin: 0, textShadow: '0 0 25px rgba(201,168,76,0.45)' }}>
+                {t('hero.tagline')}
               </h3>
               
-              <p style={{ color: 'rgba(240, 237, 228, 0.7)', fontSize: '13px', letterSpacing: '4px', textTransform: 'uppercase', marginTop: '15px' }}>
-                ✦ Madrasa e Madeenatul Uloom Ramanagara ✦
+              <p className={isUrdu ? "ur-text" : ""} style={{ color: 'rgba(240, 237, 228, 0.7)', fontSize: '13px', letterSpacing: '4px', textTransform: 'uppercase', marginTop: '15px' }}>
+                {isUrdu ? "✦ مدرسہ مدینۃ العلوم رام نگر ✦" : "✦ Madrasa e Madeenatul Uloom Ramanagara ✦"}
               </p>
               
             </div>
@@ -881,11 +967,11 @@ const Gallery = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <h3 className="font-playfair" style={{ fontSize: 'clamp(26px, 4.5vw, 42px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.4', marginBottom: '10px' }}>
-                  Every Generation Leaves A Legacy.
+                <h3 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(26px, 4.5vw, 42px)', fontWeight: '300', color: '#ffffff', lineHeight: '1.4', marginBottom: '10px' }}>
+                  {isUrdu ? "ہر نسل ایک ورثہ چھوڑتی ہے۔" : "Every Generation Leaves A Legacy."}
                 </h3>
-                <h3 className="font-playfair text-gold" style={{ fontSize: 'clamp(26px, 4.5vw, 42px)', fontWeight: '300', lineHeight: '1.4', marginBottom: '40px' }}>
-                  Every Student Carries It Forward.
+                <h3 className={`font-playfair text-gold ${isUrdu ? "ur-text" : ""}`} style={{ fontSize: 'clamp(26px, 4.5vw, 42px)', fontWeight: '300', lineHeight: '1.4', marginBottom: '40px' }}>
+                  {isUrdu ? "ہر طالب علم اسے آگے بڑھاتا ہے۔" : "Every Student Carries It Forward."}
                 </h3>
                 
                 {/* Luxury Gold Button linking to programs */}
@@ -916,7 +1002,7 @@ const Gallery = () => {
                     e.target.style.boxShadow = '0 8px 24px rgba(201, 168, 76, 0.25)';
                   }}
                 >
-                  Explore Our Programs
+                  {isUrdu ? "تعلیمی شعبے دیکھیں" : "Explore Our Programs"}
                 </a>
               </motion.div>
             )}
@@ -1036,17 +1122,17 @@ const Gallery = () => {
               </div>
 
               {/* Details Panel */}
-              <div className="lightbox-desc-panel">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <h4 className="font-playfair" style={{ color: '#ffffff', fontSize: '22px', margin: 0, fontWeight: 'normal' }}>
+              <div className="lightbox-desc-panel" style={{ textAlign: isUrdu ? 'right' : 'left' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexDirection: isUrdu ? 'row-reverse' : 'row' }}>
+                  <h4 className={`font-playfair ${isUrdu ? "ur-text" : ""}`} style={{ color: '#ffffff', fontSize: '22px', margin: 0, fontWeight: 'normal' }}>
                     {galleryItems[activePhoto].title}
                   </h4>
                   <span style={{ color: '#c9a84c', fontSize: '13px', fontWeight: '500', letterSpacing: '1px' }}>
-                    Photo {activePhoto + 1} of {galleryItems.length}
+                    {isUrdu ? `تصویر ${activePhoto + 1} کل ${galleryItems.length} میں سے` : `Photo ${activePhoto + 1} of ${galleryItems.length}`}
                   </span>
                 </div>
                 
-                <p style={{ color: 'var(--text-muted)', fontSize: '14.5px', lineHeight: '1.6', margin: 0 }}>
+                <p className={isUrdu ? "ur-text" : ""} style={{ color: 'var(--text-muted)', fontSize: '14.5px', lineHeight: '1.6', margin: 0 }}>
                   {galleryItems[activePhoto].story}
                 </p>
               </div>
